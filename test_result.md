@@ -193,10 +193,46 @@ frontend:
         - agent: "main"
         - comment: "FIXED: Rewrote mock Supabase client with proper insert/select/single chaining. Previous version had bug where .select() overwrote .insert() mode preventing data creation. Now folders, documents, and spreadsheets all create and persist correctly via localStorage."
 
+  - task: "Widget Border Opacity"
+    implemented: true
+    working: true
+    file: "src/components/focus/DraggableWidget.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Added border opacity slider and HEX to RGBA conversion with opacity support"
+
+  - task: "Toolbar Drag & Drop Enhancement"
+    implemented: true
+    working: true
+    file: "src/components/documents/toolbar/*"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Enhanced drag precision with PointerSensor, DragOverlay, visual drop indicators, and improved collision detection"
+
+  - task: "Error Handling & Reload Prevention"
+    implemented: true
+    working: true
+    file: "src/main.tsx, src/context/FluxContext.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Added global error handlers for unhandled rejections and errors, concurrent fetch prevention with loadingRef, optimized Vite HMR config"
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
