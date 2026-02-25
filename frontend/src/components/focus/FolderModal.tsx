@@ -314,7 +314,7 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
             </button>
           </div>
           );
-        })()}
+          })()}
 
           {/* Breadcrumb */}
           {!openDocument && breadcrumbs.length > 1 && (
