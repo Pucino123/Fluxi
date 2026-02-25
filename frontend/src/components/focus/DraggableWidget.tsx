@@ -219,12 +219,14 @@ const DraggableWidget = ({
       )}
 
       <div
-        className={`w-full h-full flex flex-col ${widgetMinimalMode ? "" : `rounded-2xl ${blurClass} ${isGlass ? "" : (isFocusMode ? "shadow-lg" : "shadow-2xl")}`} overflow-hidden`}
+        className={`w-full h-full flex flex-col ${widgetMinimalMode ? "" : `${blurClass} ${isGlass ? "" : (isFocusMode ? "shadow-lg" : "shadow-2xl")}`} overflow-hidden`}
         style={{
-          background: widgetMinimalMode ? "transparent" : (isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`),
-          borderWidth: widgetMinimalMode ? 0 : (isGlass ? 0 : 1),
+          background: widgetMinimalMode ? "transparent" : (customBgColor || (isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`)),
+          borderWidth: widgetMinimalMode ? 0 : (isGlass ? 0 : customBorderWidth),
           borderStyle: "solid",
-          borderColor: widgetMinimalMode ? "transparent" : (isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`),
+          borderColor: widgetMinimalMode ? "transparent" : (customBorderColor || (isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`)),
+          borderRadius: `${customBorderRadius}px`,
+          color: customTextColor || undefined,
           pointerEvents: "auto",
         }}
       >
