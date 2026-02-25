@@ -123,6 +123,8 @@ const SheetsToolbar = ({
         <ViewModeToggle
           studioMode={studioMode} onToggleStudio={onToggleStudio}
           zoom={100} onZoomChange={() => {}} lightMode={lm}
+          documentLightMode={documentLightMode}
+          onToggleDocumentTheme={onToggleDocumentTheme}
         />
         {onExportCsv && (
           <ToolbarButton icon={<Download size={14} />} label="Export CSV" onClick={onExportCsv} lightMode={lm} />
