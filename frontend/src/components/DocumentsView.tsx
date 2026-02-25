@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
+import { useFocusStore } from "@/context/FocusContext";
 import { FileText, Plus, Trash2, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import DocumentView from "./documents/DocumentView";
 
 const DocumentsView = () => {
   const { documents, createDocument, updateDocument, removeDocument, loading } = useDocuments();
+  const { documentThemes, updateDocumentTheme } = useFocusStore();
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
@@ -13,12 +15,15 @@ const DocumentsView = () => {
   const activeDoc = documents.find(d => d.id === selectedDoc);
 
   if (activeDoc) {
+    const lightMode = documentThemes[activeDoc.id] === "light";
     return (
       <DocumentView
         document={activeDoc}
         onBack={() => setSelectedDoc(null)}
         onUpdate={updateDocument}
         onDelete={(id) => { removeDocument(id); setSelectedDoc(null); }}
+        lightMode={lightMode}
+        onToggleLightMode={() => updateDocumentTheme(activeDoc.id, lightMode ? "dark" : "light")}
       />
     );
   }
