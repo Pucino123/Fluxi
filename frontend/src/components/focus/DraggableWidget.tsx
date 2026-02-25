@@ -360,7 +360,20 @@ const DraggableWidget = ({
         <div
           className={`w-full h-full flex flex-col ${widgetMinimalMode ? "" : `${blurClass} ${isGlass ? "" : (isFocusMode ? "shadow-lg" : "shadow-2xl")}`} overflow-hidden`}
           style={{
-            background: widgetMinimalMode ? "transparent" : (customBgColor || (isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`)),
+            background: widgetMinimalMode ? "transparent" : (() => {
+              if (customBgColor) {
+                // Convert HEX to RGBA with opacity
+                if (customBgColor.startsWith('#')) {
+                  const hex = customBgColor.replace('#', '');
+                  const r = parseInt(hex.substring(0, 2), 16);
+                  const g = parseInt(hex.substring(2, 4), 16);
+                  const b = parseInt(hex.substring(4, 6), 16);
+                  return `rgba(${r},${g},${b},${customOpacity})`;
+                }
+                return customBgColor;
+              }
+              return isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`;
+            })(),
             borderWidth: widgetMinimalMode ? 0 : (isGlass ? 0 : customBorderWidth),
             borderStyle: "solid",
             borderColor: widgetMinimalMode ? "transparent" : (customBorderColor || (isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`)),
