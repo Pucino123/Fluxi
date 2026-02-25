@@ -398,7 +398,7 @@ const DraggableWidget = ({
 
     {/* Widget Customization Context Menu */}
     {contextMenu && createPortal(
-      <>
+      <React.Fragment>
         <div className="fixed inset-0 z-[9998]" onClick={() => setContextMenu(null)} />
         <div
           className="fixed z-[9999] bg-popover/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl overflow-hidden transition-shadow hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
