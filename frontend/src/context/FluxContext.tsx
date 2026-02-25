@@ -190,6 +190,7 @@ export function FluxProvider({ children }: { children: ReactNode }) {
   const [filterPersona, setFilterPersona] = useState<string | null>(null);
 
   const loadingRef = useRef(false);
+  const userIdRef = useRef<string | null>(null);
 
   // ── Fetch all data ──
   const refreshAll = useCallback(async () => {
@@ -218,7 +219,14 @@ export function FluxProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  useEffect(() => { refreshAll(); }, [refreshAll]);
+  useEffect(() => {
+    if (!user) return;
+    // Only refresh if user ID has changed
+    if (userIdRef.current !== user.id) {
+      userIdRef.current = user.id;
+      refreshAll();
+    }
+  }, [user, refreshAll]);
 
   // ── Realtime subscriptions (incremental, not full refresh) ──
   useEffect(() => {
