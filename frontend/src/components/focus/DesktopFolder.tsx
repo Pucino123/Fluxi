@@ -258,32 +258,39 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         data-drop-target={folder.id}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
-          opacity: isBeingDragged ? 0.4 : 1, // Dim the original when being dragged
-          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.15 : (isDraggingLocal ? 1.08 : 1)),
+          /**
+           * PRECISE GLOW LOGIC:
+           * - isBeingDragged: This folder is the one being dragged (dims to 0.4)
+           * - isDropTarget: This folder is being hovered over by another dragged item (glows)
+           * - These are mutually exclusive - a folder can't be both dragged AND a drop target
+           */
+          opacity: isBeingDragged ? 0.4 : 1,
+          scale: justAbsorbed 
+            ? [1, 1.15, 0.92, 1.05, 1] 
+            : (isDropTarget && !isBeingDragged ? 1.12 : 1),
         }}
         transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { type: "spring", stiffness: 400, damping: 25 }}
         className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl transition-shadow duration-100 ${
-          isDropTarget 
-            ? "ring-2 ring-primary shadow-[0_0_40px_rgba(59,130,246,0.5)]" 
+          // ONLY the drop target gets the glow - never the dragged item
+          isDropTarget && !isBeingDragged
+            ? "ring-2 ring-primary" 
             : ""
-        } ${isDraggingLocal ? "cursor-grabbing" : "cursor-grab"}`}
+        } cursor-grab`}
         style={{
           left: pos.x, 
           top: pos.y, 
           width: 90, 
           minHeight: 90,
           gap: `${labelGap}px`,
-          // Z-INDEX STRATEGY: Drop targets float high, dragged items handled by overlay
-          zIndex: isDropTarget ? 9998 : (isDraggingLocal ? 9999 : (selected ? 55 : 45)),
-          background: isDropTarget ? "rgba(59,130,246,0.12)" : "transparent",
+          zIndex: isDropTarget ? 9998 : (selected ? 55 : 45),
+          // ONLY drop target gets blue background/glow
+          background: isDropTarget && !isBeingDragged ? "rgba(59,130,246,0.12)" : "transparent",
           backdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
           WebkitBackdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
-          boxShadow: isDropTarget 
-            ? "0 0 40px rgba(59,130,246,0.5), 0 0 80px rgba(59,130,246,0.2), inset 0 0 30px rgba(59,130,246,0.1)" 
-            : (isDraggingLocal ? "0 20px 60px rgba(0,0,0,0.4)" : (folderOpacity <= 0.01 ? "none" : undefined)),
-          border: isDropTarget ? "2px solid rgba(59,130,246,0.6)" : (folderOpacity <= 0.01 ? "none" : undefined),
-          opacity: isBeingDragged ? 0.4 : (isDraggingLocal ? 0.9 : 1),
-          transform: isDraggingLocal ? "rotate(-2deg)" : undefined,
+          boxShadow: isDropTarget && !isBeingDragged
+            ? "0 0 40px rgba(59,130,246,0.5), 0 0 80px rgba(59,130,246,0.2)" 
+            : (folderOpacity <= 0.01 ? "none" : undefined),
+          border: isDropTarget && !isBeingDragged ? "2px solid rgba(59,130,246,0.6)" : (folderOpacity <= 0.01 ? "none" : undefined),
         }}
         onPointerDown={(e) => {
           /**
