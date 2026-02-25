@@ -256,13 +256,6 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             toast.success(`Folder moved to ${folder.title}`);
           }
         }}
-        draggable
-        onDragStart={(e) => {
-          e.dataTransfer.setData("desktop-folder-id", folder.id);
-          e.dataTransfer.effectAllowed = "move";
-          onDragStateChange?.({ id: folder.id, x: e.clientX, y: e.clientY });
-        }}
-        onDragEnd={() => onDragStateChange?.(null)}
       >
         {/* Background layer */}
         {folderOpacity > 0.01 ? (
