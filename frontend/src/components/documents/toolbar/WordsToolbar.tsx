@@ -181,7 +181,7 @@ const WordsToolbar = ({
       drag={isFloating && !isPinned}
       dragMomentum={true}
       dragElastic={0.1}
-      onDragEnd={handleDragEnd}
+      onDragEnd={handleToolbarDragEnd}
       whileDrag={{ scale: 1.02, cursor: "grabbing" }}
       className={`flex flex-wrap items-center gap-1.5 px-2 py-2 border transition-all duration-300 ${
         isFloating
