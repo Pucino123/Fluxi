@@ -359,7 +359,9 @@ const FocusContent = () => {
 
 const FocusDashboardView = () => (
   <FocusProvider>
-    <FocusContent />
+    <DesktopDragProvider>
+      <FocusContent />
+    </DesktopDragProvider>
   </FocusProvider>
 );
 
