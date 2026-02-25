@@ -230,6 +230,14 @@ const da: Record<string, string> = {
   "folder.finance": "Økonomi",
   "folder.fitness": "Træning",
   "folder.notes": "Noter",
+  "folder.create_title": "Opret Mappe",
+  "folder.create_desc": "Organiser dine projekter og noter",
+  "folder.name_placeholder": "Mappenavn",
+  "folder.change_icon": "Skift ikon",
+  "folder.choose_icon": "Vælg ikon",
+  "folder.color_label": "Vælg farve",
+  "folder.ai_structure": "AI-foreslået struktur",
+  "folder.create_button": "Opret Mappe",
 
   // Duplicate modal
   "duplicate.title": "Duplikat fundet",
