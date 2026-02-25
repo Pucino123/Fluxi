@@ -157,11 +157,54 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
   const lucideIcon = storedIconName && !storedIconName.startsWith("http") ? FOLDER_ICONS.find(i => i.name === storedIconName) : null;
   const iconSize = 40;
 
+  // Create a custom drag image
+  const createDragImage = useCallback((e: React.DragEvent) => {
+    const dragEl = document.createElement('div');
+    dragEl.className = 'flex flex-col items-center justify-center p-2 rounded-xl bg-card/90 backdrop-blur-md shadow-2xl border border-primary/30';
+    dragEl.style.cssText = 'position: absolute; top: -1000px; left: -1000px; width: 80px; min-height: 70px; pointer-events: none;';
+    
+    const icon = document.createElement('div');
+    icon.innerHTML = isSpreadsheet 
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><path d="M3 10h18"/><path d="M10 3v18"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
+    icon.style.cssText = 'display: flex; justify-content: center; margin-bottom: 4px;';
+    
+    const title = document.createElement('span');
+    title.textContent = doc.title.length > 12 ? doc.title.slice(0, 12) + '...' : doc.title;
+    title.style.cssText = 'font-size: 10px; color: rgba(255,255,255,0.9); text-align: center; max-width: 70px; overflow: hidden;';
+    
+    dragEl.appendChild(icon);
+    dragEl.appendChild(title);
+    document.body.appendChild(dragEl);
+    
+    e.dataTransfer.setDragImage(dragEl, 40, 35);
+    
+    // Cleanup after drag starts
+    requestAnimationFrame(() => {
+      setTimeout(() => document.body.removeChild(dragEl), 0);
+    });
+  }, [isSpreadsheet, resolvedIconColor, doc.title]);
+
   return (
     <>
       <div
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl group transition-transform ${isDragging ? "scale-105 shadow-2xl" : ""}`}
-        style={{ left: pos.x, top: pos.y, width: 90, minHeight: 90, gap: `${labelGap}px`, zIndex: isDragging ? 999 : 45, background: "transparent", backdropFilter: docOpacity <= 0.06 ? "none" : undefined, WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, boxShadow: docOpacity <= 0.06 ? "none" : undefined, border: docOpacity <= 0.06 ? "none" : undefined, opacity: isDragging ? 0.85 : 1 }}
+        data-desktop-doc-id={doc.id}
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-grab select-none rounded-2xl group transition-all duration-200 ${
+          isDragging ? "scale-110 shadow-2xl opacity-60 cursor-grabbing ring-2 ring-primary/40" : "hover:scale-105"
+        }`}
+        style={{ 
+          left: pos.x, 
+          top: pos.y, 
+          width: 90, 
+          minHeight: 90, 
+          gap: `${labelGap}px`, 
+          zIndex: isDragging ? 9999 : 45, 
+          background: "transparent", 
+          backdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
+          WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
+          boxShadow: docOpacity <= 0.06 ? "none" : undefined, 
+          border: docOpacity <= 0.06 ? "none" : undefined,
+        }}
         onPointerDown={handlePointerDown}
         onClick={(e) => { e.stopPropagation(); }}
         onDoubleClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
@@ -173,7 +216,9 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
             return;
           }
           e.dataTransfer.setData("desktop-doc-id", doc.id);
+          e.dataTransfer.setData("text/plain", doc.title);
           e.dataTransfer.effectAllowed = "move";
+          createDragImage(e);
           setIsDragging(true);
         }}
         onDragEnd={() => setIsDragging(false)}
