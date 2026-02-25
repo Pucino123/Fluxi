@@ -230,7 +230,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) setSelected(true); }}
         onContextMenu={handleContextMenu}
         onDragOver={(e) => {
-          if (e.dataTransfer.types.includes("desktop-doc-id")) {
+          if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
             e.preventDefault();
             e.dataTransfer.dropEffect = "move";
             setIsDropTarget(true);
@@ -239,6 +239,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         onDragLeave={() => setIsDropTarget(false)}
         onDrop={async (e) => {
           const docId = e.dataTransfer.getData("desktop-doc-id");
+          const folderId = e.dataTransfer.getData("desktop-folder-id");
           if (docId) {
             e.preventDefault();
             e.stopPropagation();
@@ -246,8 +247,22 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             await (supabase as any).from("documents").update({ folder_id: folder.id }).eq("id", docId);
             triggerAbsorb();
             toast.success(`Moved to ${folder.title}`);
+          } else if (folderId && folderId !== folder.id) {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDropTarget(false);
+            await updateFolder(folderId, { parent_id: folder.id });
+            triggerAbsorb();
+            toast.success(`Folder moved to ${folder.title}`);
           }
         }}
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData("desktop-folder-id", folder.id);
+          e.dataTransfer.effectAllowed = "move";
+          onDragStateChange?.({ id: folder.id, x: e.clientX, y: e.clientY });
+        }}
+        onDragEnd={() => onDragStateChange?.(null)}
       >
         {/* Background layer */}
         {folderOpacity > 0.01 ? (
