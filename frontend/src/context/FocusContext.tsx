@@ -231,6 +231,22 @@ interface FocusContextValue extends FocusState {
   updateDesktopFolderLabelGap: (folderId: string, gap: number) => void;
   desktopDocLabelGaps: Record<string, number>;
   updateDesktopDocLabelGap: (docId: string, gap: number) => void;
+  widgetStyles: Record<string, {
+    textColor?: string;
+    bgColor?: string;
+    opacity?: number;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+  }>;
+  updateWidgetStyle: (widgetId: string, style: Partial<{
+    textColor?: string;
+    bgColor?: string;
+    opacity?: number;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+  }>) => void;
   resetDashboard: () => void;
 }
 
