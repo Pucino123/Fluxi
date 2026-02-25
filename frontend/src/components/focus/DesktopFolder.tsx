@@ -104,6 +104,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
   };
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (e.button !== 0) return; // Only left mouse button
     e.stopPropagation();
     setSelected(true);
     dragging.current = true;
@@ -127,7 +128,12 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
-    return () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerup", onUp); };
+    window.addEventListener("pointercancel", onUp); // Also handle pointer cancel
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
   }, [folder.id, updateDesktopFolderPosition, onDragStateChange]);
 
   const handleContextMenu = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setContextMenu({ x: e.clientX, y: e.clientY }); };
