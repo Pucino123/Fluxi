@@ -112,10 +112,13 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
   }, [pos.x, pos.y]);
 
+  const [isDraggingLocal, setIsDraggingLocal] = useState(false);
+
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       if (!dragging.current) return;
       didDrag.current = true;
+      setIsDraggingLocal(true);
       const nx = Math.max(0, e.clientX - offset.current.x);
       const ny = Math.max(0, e.clientY - offset.current.y);
       updateDesktopFolderPosition(folder.id, { x: nx, y: ny });
@@ -124,6 +127,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
     const onUp = () => {
       if (!dragging.current) return;
       dragging.current = false;
+      setIsDraggingLocal(false);
       if (didDrag.current && onDragStateChange) { onDragStateChange(null); }
     };
     window.addEventListener("pointermove", onMove);
