@@ -400,6 +400,9 @@ export function FocusProvider({ children }: { children: ReactNode }) {
           [widgetId]: { ...(prev.widgetStyles?.[widgetId] ?? {}), ...style },
         },
       })),
+    documentThemes: state.documentThemes ?? {},
+    updateDocumentTheme: (docId, theme) =>
+      setState((prev) => ({ ...prev, documentThemes: { ...(prev.documentThemes ?? {}), [docId]: theme } })),
     resetDashboard: () => setState({
       ...DEFAULT_STATE,
       currentBackground: state.currentBackground,
