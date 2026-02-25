@@ -95,6 +95,8 @@ const WordsToolbar = ({
         <ViewModeToggle
           studioMode={studioMode} onToggleStudio={onToggleStudio}
           zoom={zoom} onZoomChange={onZoomChange} lightMode={lm}
+          documentLightMode={documentLightMode}
+          onToggleDocumentTheme={onToggleDocumentTheme}
         />
       </ToolbarSegment>
     ),
