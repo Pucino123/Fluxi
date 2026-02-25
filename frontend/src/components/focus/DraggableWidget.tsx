@@ -78,6 +78,7 @@ const DraggableWidget = ({
   const [showOpacity, setShowOpacity] = useState(false);
   const [showFontSize, setShowFontSize] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   const opacity = getWidgetOpacity(id);
   const textDark = opacity > 0.55;
