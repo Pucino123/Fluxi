@@ -41,6 +41,15 @@ const WordsToolbar = ({
 }: WordsToolbarProps) => {
   const lm = lightMode;
   const { order, handleReorder } = useToolbarOrder("flux-words-toolbar-order", DEFAULT_ORDER);
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const segmentMap: Record<string, React.ReactNode> = {
     file: (
