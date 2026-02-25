@@ -57,7 +57,7 @@ const BuildModeGrid = () => (
 
 const FocusContent = () => {
   const { activeWidgets, systemMode, setFocusStickyNotes, focusStickyNotes, toggleWidget } = useFocusStore();
-  const { folderTree, createFolder, moveFolder } = useFlux();
+  const { folderTree, createFolder, moveFolder, updateFolder } = useFlux();
   const { user } = useAuth();
   const { documents: desktopDocs, refetch: refetchDesktopDocs, updateDocument: updateDesktopDoc, removeDocument: removeDesktopDoc, createDocument } = useDocuments(null);
   const [clockEditorOpen, setClockEditorOpen] = useState(false);
@@ -77,6 +77,41 @@ const FocusContent = () => {
     window.addEventListener('document-moved', handleDocumentMoved);
     return () => window.removeEventListener('document-moved', handleDocumentMoved);
   }, [refetchDesktopDocs]);
+
+  // Listen for desktop-drop events from the new drag context
+  useEffect(() => {
+    const handleDesktopDrop = async (e: CustomEvent) => {
+      const { item, targetId } = e.detail;
+      if (!item || !targetId) return;
+      
+      if (item.type === "document") {
+        // Move document into folder
+        const { error } = await (supabase as any)
+          .from("documents")
+          .update({ folder_id: targetId })
+          .eq("id", item.id);
+        
+        if (!error) {
+          // Trigger folder absorb animation
+          const folderEl = document.querySelector(`[data-folder-id="${targetId}"]`) as any;
+          if (folderEl?.__triggerAbsorb) folderEl.__triggerAbsorb();
+          toast.success("Moved to folder");
+          refetchDesktopDocs();
+        } else {
+          toast.error("Failed to move document");
+        }
+      } else if (item.type === "folder" && item.id !== targetId) {
+        // Move folder into another folder
+        await updateFolder(item.id, { parent_id: targetId });
+        const folderEl = document.querySelector(`[data-folder-id="${targetId}"]`) as any;
+        if (folderEl?.__triggerAbsorb) folderEl.__triggerAbsorb();
+        toast.success("Folder moved");
+      }
+    };
+    
+    window.addEventListener('desktop-drop', handleDesktopDrop as EventListener);
+    return () => window.removeEventListener('desktop-drop', handleDesktopDrop as EventListener);
+  }, [refetchDesktopDocs, updateFolder]);
 
   const handleCreateDocument = useCallback(async (type: "text" | "spreadsheet") => {
     setShowDocPicker(false);
