@@ -210,7 +210,7 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
           }}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 pt-5 pb-3">
+          <div className={`flex items-center gap-3 px-5 pt-5 pb-3 ${folderLightMode ? "bg-white" : "bg-card/60"}`}>
             {(navStack.length > 1 || openDocument) && !renaming && (
               <button
                 onClick={() => {
