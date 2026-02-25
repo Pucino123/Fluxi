@@ -136,7 +136,7 @@ interface CreateFolderModalProps {
 }
 
 const CreateFolderModal = ({ open, onClose, onCreate }: CreateFolderModalProps) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Create Folder");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<string>("Folder");
   const [showIconPicker, setShowIconPicker] = useState(false);
