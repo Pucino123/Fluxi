@@ -166,8 +166,12 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
         onClick={(e) => { e.stopPropagation(); }}
         onDoubleClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
         onContextMenu={handleContextMenu}
-        draggable
+        draggable={!isDragging}
         onDragStart={(e) => {
+          if (isDragging) {
+            e.preventDefault();
+            return;
+          }
           e.dataTransfer.setData("desktop-doc-id", doc.id);
           e.dataTransfer.effectAllowed = "move";
           setIsDragging(true);
