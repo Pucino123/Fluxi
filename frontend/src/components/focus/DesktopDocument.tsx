@@ -157,31 +157,47 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
   const lucideIcon = storedIconName && !storedIconName.startsWith("http") ? FOLDER_ICONS.find(i => i.name === storedIconName) : null;
   const iconSize = 40;
 
-  // Create a custom drag image
+  /**
+   * Create custom drag image for smooth visual feedback
+   * Uses a portal-style element positioned off-screen, then set as drag image
+   */
   const createDragImage = useCallback((e: React.DragEvent) => {
     const dragEl = document.createElement('div');
-    dragEl.className = 'flex flex-col items-center justify-center p-2 rounded-xl bg-card/90 backdrop-blur-md shadow-2xl border border-primary/30';
-    dragEl.style.cssText = 'position: absolute; top: -1000px; left: -1000px; width: 80px; min-height: 70px; pointer-events: none;';
+    dragEl.className = 'flex flex-col items-center justify-center p-3 rounded-2xl';
+    dragEl.style.cssText = `
+      position: fixed; 
+      top: -1000px; 
+      left: -1000px; 
+      width: 90px; 
+      min-height: 90px; 
+      pointer-events: none;
+      background: rgba(30,30,40,0.95);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(59,130,246,0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(59,130,246,0.3);
+      z-index: 99999;
+    `;
     
     const icon = document.createElement('div');
     icon.innerHTML = isSpreadsheet 
-      ? `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><path d="M3 10h18"/><path d="M10 3v18"/></svg>`
-      : `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
-    icon.style.cssText = 'display: flex; justify-content: center; margin-bottom: 4px;';
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><path d="M3 10h18"/><path d="M10 3v18"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${resolvedIconColor}" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>`;
+    icon.style.cssText = 'display: flex; justify-content: center; margin-bottom: 6px;';
     
     const title = document.createElement('span');
     title.textContent = doc.title.length > 12 ? doc.title.slice(0, 12) + '...' : doc.title;
-    title.style.cssText = 'font-size: 10px; color: rgba(255,255,255,0.9); text-align: center; max-width: 70px; overflow: hidden;';
+    title.style.cssText = 'font-size: 11px; color: rgba(255,255,255,0.9); text-align: center; max-width: 80px; overflow: hidden; font-weight: 500;';
     
     dragEl.appendChild(icon);
     dragEl.appendChild(title);
     document.body.appendChild(dragEl);
     
-    e.dataTransfer.setDragImage(dragEl, 40, 35);
+    e.dataTransfer.setDragImage(dragEl, 45, 45);
     
-    // Cleanup after drag starts
     requestAnimationFrame(() => {
-      setTimeout(() => document.body.removeChild(dragEl), 0);
+      setTimeout(() => {
+        if (dragEl.parentNode) document.body.removeChild(dragEl);
+      }, 0);
     });
   }, [isSpreadsheet, resolvedIconColor, doc.title]);
 
@@ -189,8 +205,10 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
     <>
       <div
         data-desktop-doc-id={doc.id}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-grab select-none rounded-2xl group transition-all duration-200 ${
-          isDragging ? "scale-110 shadow-2xl opacity-60 cursor-grabbing ring-2 ring-primary/40" : "hover:scale-105"
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl group transition-all duration-150 ${
+          isDragging 
+            ? "cursor-grabbing ring-2 ring-primary shadow-[0_20px_60px_rgba(0,0,0,0.4)]" 
+            : "cursor-grab hover:scale-105"
         }`}
         style={{ 
           left: pos.x, 
@@ -198,12 +216,15 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
           width: 90, 
           minHeight: 90, 
           gap: `${labelGap}px`, 
+          // Z-INDEX: Dragging items at 9999 to float above headers, sidebars, everything
           zIndex: isDragging ? 9999 : 45, 
           background: "transparent", 
           backdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
           WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
-          boxShadow: docOpacity <= 0.06 ? "none" : undefined, 
+          boxShadow: isDragging ? "0 20px 60px rgba(0,0,0,0.4)" : (docOpacity <= 0.06 ? "none" : undefined),
           border: docOpacity <= 0.06 ? "none" : undefined,
+          opacity: isDragging ? 0.85 : 1,
+          transform: isDragging ? "scale(1.1) rotate(-2deg)" : undefined,
         }}
         onPointerDown={handlePointerDown}
         onClick={(e) => { e.stopPropagation(); }}
