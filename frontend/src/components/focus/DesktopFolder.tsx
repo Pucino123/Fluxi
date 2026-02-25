@@ -286,68 +286,23 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
           transform: isDraggingLocal ? "rotate(-2deg)" : undefined,
         }}
         onPointerDown={(e) => {
-          // Use the new context-based drag for primary button
+          /**
+           * GHOST IMAGE SUPPRESSION:
+           * We use pointer events exclusively (not HTML5 drag).
+           * This completely bypasses the browser's native drag system,
+           * so no ghost image is ever created. The custom DragOverlay
+           * from DesktopDragContext handles all visual feedback.
+           */
           if (e.button === 0 && !renaming) {
             handleContextDragStart(e);
           }
-          // Also call the legacy handler for position tracking
           handlePointerDown(e);
         }}
         onDoubleClick={handleDoubleClick}
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) setSelected(true); }}
         onContextMenu={handleContextMenu}
-        onDragOver={(e) => {
-          // Accept drops from documents and folders (legacy HTML5 DnD support)
-          if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.dataTransfer.dropEffect = "move";
-            if (!isDropTargetLocal) setIsDropTargetLocal(true);
-          }
-        }}
-        onDragEnter={(e) => {
-          if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsDropTargetLocal(true);
-          }
-        }}
-        onDragLeave={(e) => {
-          // Check if we're truly leaving (not entering a child element)
-          const rect = folderRef.current?.getBoundingClientRect();
-          if (rect) {
-            const { clientX, clientY } = e;
-            const padding = 5;
-            if (clientX < rect.left - padding || clientX > rect.right + padding || 
-                clientY < rect.top - padding || clientY > rect.bottom + padding) {
-              setIsDropTarget(false);
-            }
-          }
-        }}
-        onDrop={async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setIsDropTarget(false);
-          
-          const docId = e.dataTransfer.getData("desktop-doc-id");
-          const droppedFolderId = e.dataTransfer.getData("desktop-folder-id");
-          
-          if (docId) {
-            // Move document into this folder
-            const { error } = await (supabase as any)
-              .from("documents")
-              .update({ folder_id: folder.id })
-              .eq("id", docId);
-            
-            if (!error) {
-              triggerAbsorb();
-              toast.success(`Moved to ${folder.title}`);
-              window.dispatchEvent(new CustomEvent('document-moved', { detail: { docId, folderId: folder.id } }));
-            } else {
-              toast.error("Failed to move document");
-            }
-          } else if (droppedFolderId && droppedFolderId !== folder.id) {
-            // Move folder into this folder (nesting)
+        // NOTE: HTML5 drag events removed - using pointer events exclusively
+      >
             await updateFolder(droppedFolderId, { parent_id: folder.id });
             triggerAbsorb();
             toast.success(`Folder moved to ${folder.title}`);
