@@ -86,11 +86,9 @@ const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: P
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
+        onClick={onClose}
       >
-        {/* Backdrop - click handler on separate layer */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-md pointer-events-auto" onClick={onClose} />
-        
         {/* Modal */}
         <motion.div
           key="doc-viewer"
@@ -98,7 +96,7 @@ const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: P
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 20 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className={`relative flex flex-col backdrop-blur-2xl border rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 z-10 pointer-events-auto ${
+          className={`relative flex flex-col backdrop-blur-2xl border rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ${
             expanded ? "w-full h-full max-w-none max-h-none rounded-none" : "w-full max-w-4xl max-h-[85vh]"
           } ${
             lightMode
