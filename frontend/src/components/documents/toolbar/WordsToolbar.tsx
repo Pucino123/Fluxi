@@ -219,7 +219,7 @@ const WordsToolbar = ({
         )}
       </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onSegmentDragStart} onDragEnd={onSegmentDragEnd}>
         <SortableContext items={order} strategy={horizontalListSortingStrategy}>
           <AnimatePresence mode="sync">
             {order.map(id => segmentMap[id])}
