@@ -84,15 +84,18 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
   }, [pos.x, pos.y]);
 
+  const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       if (!dragging.current) return;
       didDrag.current = true;
+      setIsDragging(true);
       const nx = Math.max(0, e.clientX - offset.current.x);
       const ny = Math.max(0, e.clientY - offset.current.y);
       store.updateDesktopDocPosition(doc.id, { x: nx, y: ny });
     };
-    const onUp = () => { dragging.current = false; };
+    const onUp = () => { dragging.current = false; setIsDragging(false); };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
     return () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerup", onUp); };
