@@ -192,21 +192,27 @@ export function FluxProvider({ children }: { children: ReactNode }) {
   // ── Fetch all data ──
   const refreshAll = useCallback(async () => {
     if (!user) { setLoading(false); return; }
+    if (loading) return; // Prevent concurrent refreshes
     setLoading(true);
-    const [fRes, tRes, gRes, wRes, sRes] = await Promise.all([
-      supabase.from("folders").select("*").eq("user_id", user.id).order("sort_order"),
-      supabase.from("tasks").select("*").eq("user_id", user.id).order("sort_order"),
-      supabase.from("goals").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false }),
-      supabase.from("schedule_blocks").select("*").eq("user_id", user.id).order("time"),
-    ]);
-    setFolders((fRes.data || []) as unknown as DbFolder[]);
-    setTasks((tRes.data || []) as unknown as DbTask[]);
-    setGoals((gRes.data || []) as unknown as DbGoal[]);
-    setWorkouts((wRes.data || []) as unknown as DbWorkout[]);
-    setScheduleBlocks((sRes.data || []) as unknown as DbScheduleBlock[]);
-    setLoading(false);
-  }, [user]);
+    try {
+      const [fRes, tRes, gRes, wRes, sRes] = await Promise.all([
+        supabase.from("folders").select("*").eq("user_id", user.id).order("sort_order"),
+        supabase.from("tasks").select("*").eq("user_id", user.id).order("sort_order"),
+        supabase.from("goals").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("workouts").select("*").eq("user_id", user.id).order("date", { ascending: false }),
+        supabase.from("schedule_blocks").select("*").eq("user_id", user.id).order("time"),
+      ]);
+      setFolders((fRes.data || []) as unknown as DbFolder[]);
+      setTasks((tRes.data || []) as unknown as DbTask[]);
+      setGoals((gRes.data || []) as unknown as DbGoal[]);
+      setWorkouts((wRes.data || []) as unknown as DbWorkout[]);
+      setScheduleBlocks((sRes.data || []) as unknown as DbScheduleBlock[]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, loading]);
 
   useEffect(() => { refreshAll(); }, [refreshAll]);
 
