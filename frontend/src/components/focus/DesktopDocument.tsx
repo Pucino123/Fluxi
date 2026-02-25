@@ -245,16 +245,23 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
           WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
           boxShadow: isDragging ? "0 20px 60px rgba(0,0,0,0.4)" : (docOpacity <= 0.06 ? "none" : undefined),
           border: docOpacity <= 0.06 ? "none" : undefined,
-          opacity: isDragging ? 0.85 : 1,
+          opacity: isBeingDragged ? 0.35 : (isDragging ? 0.85 : 1),
           transform: isDragging ? "scale(1.1) rotate(-2deg)" : undefined,
         }}
-        onPointerDown={handlePointerDown}
+        onPointerDown={(e) => {
+          // Use the new context-based drag for primary button
+          if (e.button === 0 && !renaming) {
+            handleContextDragStart(e);
+          }
+          // Also call legacy handler for position tracking
+          handlePointerDown(e);
+        }}
         onClick={(e) => { e.stopPropagation(); }}
         onDoubleClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
         onContextMenu={handleContextMenu}
-        draggable={!isDragging}
+        draggable={!isDragging && !isBeingDragged}
         onDragStart={(e) => {
-          if (isDragging) {
+          if (isDragging || isBeingDragged) {
             e.preventDefault();
             return;
           }
