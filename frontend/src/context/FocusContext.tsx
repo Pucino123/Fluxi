@@ -250,6 +250,8 @@ interface FocusContextValue extends FocusState {
     borderColor?: string;
     borderWidth?: number;
   }>) => void;
+  documentThemes: Record<string, "light" | "dark">;
+  updateDocumentTheme: (docId: string, theme: "light" | "dark") => void;
   resetDashboard: () => void;
 }
 
