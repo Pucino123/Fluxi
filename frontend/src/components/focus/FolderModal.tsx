@@ -308,11 +308,13 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
 
             <button
               onClick={onClose}
-              className={`p-2 rounded-lg transition-colors ${folderLightMode ? "text-gray-500 hover:bg-gray-100 hover:text-gray-800" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}
+              className={`p-2 rounded-lg transition-colors ${headerLightMode ? "text-gray-500 hover:bg-gray-100 hover:text-gray-800" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}
             >
               <X size={16} />
             </button>
           </div>
+            );
+          })()}
 
           {/* Breadcrumb */}
           {!openDocument && breadcrumbs.length > 1 && (
