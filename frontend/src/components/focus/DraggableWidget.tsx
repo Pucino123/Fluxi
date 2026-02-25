@@ -380,7 +380,7 @@ const DraggableWidget = ({
         )}
 
         <div
-          className={`w-full h-full flex flex-col ${widgetMinimalMode ? "" : `${blurClass} ${isGlass ? "" : (isFocusMode ? "shadow-lg" : "shadow-2xl")}`} overflow-hidden`}
+          className={`w-full h-full flex flex-col ${widgetMinimalMode ? "" : (isGlass ? "" : (isFocusMode ? "shadow-lg" : "shadow-2xl"))} overflow-hidden`}
           style={{
             background: widgetMinimalMode ? "transparent" : (() => {
               if (customBgColor) {
@@ -396,6 +396,8 @@ const DraggableWidget = ({
               }
               return isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`;
             })(),
+            backdropFilter: widgetMinimalMode ? "none" : `blur(${customBlur}px)`,
+            WebkitBackdropFilter: widgetMinimalMode ? "none" : `blur(${customBlur}px)`,
             borderWidth: widgetMinimalMode ? 0 : (customBorderWidth !== undefined ? `${customBorderWidth}px` : (isGlass ? 0 : 1)),
             borderStyle: "solid",
             borderColor: widgetMinimalMode ? "transparent" : (() => {
