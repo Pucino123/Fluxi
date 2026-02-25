@@ -126,9 +126,12 @@ const WordsToolbar = ({
             {order.map(id => segmentMap[id])}
           </AnimatePresence>
         </SortableContext>
-        <DragOverlay dropAnimation={null}>
+        <DragOverlay dropAnimation={{
+          duration: 200,
+          easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+        }}>
           {activeId ? (
-            <div className="opacity-90 scale-105 cursor-grabbing">
+            <div className="opacity-95 scale-110 cursor-grabbing shadow-2xl">
               {segmentMap[activeId]}
             </div>
           ) : null}
