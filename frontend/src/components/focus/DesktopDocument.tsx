@@ -78,6 +78,8 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
   const displayedIcons = showAllIcons ? filteredIcons : filteredIcons.slice(0, 12);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    // Only start desktop positioning drag, not HTML5 drag
+    if (e.button !== 0) return; // Only left mouse button
     e.stopPropagation();
     dragging.current = true;
     didDrag.current = false;
@@ -95,10 +97,18 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
       const ny = Math.max(0, e.clientY - offset.current.y);
       store.updateDesktopDocPosition(doc.id, { x: nx, y: ny });
     };
-    const onUp = () => { dragging.current = false; setIsDragging(false); };
+    const onUp = () => {
+      dragging.current = false;
+      setIsDragging(false);
+    };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
-    return () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerup", onUp); };
+    window.addEventListener("pointercancel", onUp); // Also handle pointer cancel
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
   }, [doc.id, store.updateDesktopDocPosition]);
 
   const handleContextMenu = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setContextMenu({ x: e.clientX, y: e.clientY }); };
