@@ -159,7 +159,7 @@ const CreateFolderModal = ({ open, onClose, onCreate }: CreateFolderModalProps) 
   };
 
   const handleReset = () => {
-    setName("");
+    setName("Create Folder");
     setSelectedColor(null);
     setSelectedIcon("Folder");
     setShowIconPicker(false);
