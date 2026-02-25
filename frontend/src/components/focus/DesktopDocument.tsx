@@ -220,9 +220,14 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
 
   return (
     <>
-      <div
+      <motion.div
         data-desktop-doc-id={doc.id}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl group transition-all duration-150 ${
+        animate={{
+          opacity: isBeingDragged ? 0.35 : 1, // Dim original when being dragged
+          scale: isBeingDragged ? 0.95 : 1,
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl group transition-shadow duration-100 ${
           isDragging 
             ? "cursor-grabbing ring-2 ring-primary shadow-[0_20px_60px_rgba(0,0,0,0.4)]" 
             : "cursor-grab hover:scale-105"
@@ -233,7 +238,7 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
           width: 90, 
           minHeight: 90, 
           gap: `${labelGap}px`, 
-          // Z-INDEX: Dragging items at 9999 to float above headers, sidebars, everything
+          // Z-INDEX: Normal items, overlay handles the floating drag visual
           zIndex: isDragging ? 9999 : 45, 
           background: "transparent", 
           backdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
