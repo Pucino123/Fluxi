@@ -1,6 +1,6 @@
 import React from "react";
 import { AnimatePresence } from "framer-motion";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, closestCenter, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useToolbarOrder } from "@/hooks/useToolbarOrder";
 import FileMenu from "./FileMenu";
