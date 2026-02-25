@@ -174,7 +174,7 @@ const SheetsToolbar = ({
     ),
   };
 
-  const onDragEnd = (event: DragEndEvent) => {
+  const onSegmentDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       handleReorder(active.id as string, over.id as string);
@@ -182,17 +182,56 @@ const SheetsToolbar = ({
     setActiveId(null);
   };
 
-  const onDragStart = (event: any) => {
+  const onSegmentDragStart = (event: any) => {
     setActiveId(event.active.id);
   };
 
   return (
-    <div className={`flex flex-wrap items-center gap-1.5 px-2 py-2 border-b transition-colors ${
-      studioMode
-        ? "fixed top-4 left-1/2 -translate-x-1/2 z-[200] rounded-2xl bg-popover/95 backdrop-blur-xl border-border/30 shadow-2xl max-w-[95vw]"
-        : lm ? "border-gray-200 bg-transparent" : "border-white/[0.08] bg-transparent"
-    }`}>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+    <motion.div
+      ref={toolbarRef}
+      style={isFloating ? { x: springX, y: springY } : undefined}
+      drag={isFloating && !isPinned}
+      dragMomentum={true}
+      dragElastic={0.1}
+      onDragEnd={handleToolbarDragEnd}
+      whileDrag={{ scale: 1.02, cursor: "grabbing" }}
+      className={`flex flex-wrap items-center gap-1.5 px-2 py-2 border transition-all duration-300 ${
+        isFloating
+          ? `fixed top-4 left-1/2 -translate-x-1/2 z-[200] rounded-2xl ${lm ? "bg-white/95 border-gray-200/60" : "bg-popover/95 border-border/30"} backdrop-blur-xl shadow-2xl max-w-[95vw] cursor-grab`
+          : studioMode
+            ? `fixed top-4 left-1/2 -translate-x-1/2 z-[200] rounded-2xl ${lm ? "bg-white/95 border-gray-200/60" : "bg-popover/95 border-border/30"} backdrop-blur-xl shadow-2xl max-w-[95vw]`
+            : lm ? "border-gray-200 bg-transparent" : "border-white/[0.08] bg-transparent"
+      }`}
+    >
+      {/* Float/Pin controls */}
+      <div className="flex items-center gap-0.5 pr-1.5 border-r border-border/30 mr-1">
+        <button
+          onClick={toggleFloating}
+          className={`p-1.5 rounded-lg transition-all ${
+            isFloating
+              ? lm ? "bg-blue-50 text-blue-600" : "bg-primary/15 text-primary"
+              : lm ? "hover:bg-gray-100 text-gray-400" : "hover:bg-secondary/60 text-muted-foreground/60"
+          }`}
+          title={isFloating ? "Dock toolbar" : "Float toolbar"}
+        >
+          <GripVertical size={14} />
+        </button>
+        {isFloating && (
+          <button
+            onClick={() => setIsPinned(!isPinned)}
+            className={`p-1.5 rounded-lg transition-all ${
+              isPinned
+                ? lm ? "bg-amber-50 text-amber-600" : "bg-amber-500/15 text-amber-400"
+                : lm ? "hover:bg-gray-100 text-gray-400" : "hover:bg-secondary/60 text-muted-foreground/60"
+            }`}
+            title={isPinned ? "Unpin toolbar" : "Pin toolbar"}
+          >
+            {isPinned ? <Pin size={12} /> : <PinOff size={12} />}
+          </button>
+        )}
+      </div>
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onSegmentDragStart} onDragEnd={onSegmentDragEnd}>
         <SortableContext items={order} strategy={horizontalListSortingStrategy}>
           <AnimatePresence mode="sync">
             {order.map(id => segmentMap[id])}
@@ -209,7 +248,7 @@ const SheetsToolbar = ({
           ) : null}
         </DragOverlay>
       </DndContext>
-    </div>
+    </motion.div>
   );
 };
 
