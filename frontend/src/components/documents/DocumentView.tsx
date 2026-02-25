@@ -155,6 +155,8 @@ const TextEditor = ({ document: doc, onUpdate, onDelete, renaming, setRenaming, 
         studioMode={studioMode} onToggleStudio={() => setStudioMode(!studioMode)}
         zoom={zoom} onZoomChange={setZoom}
         lightMode={lm}
+        documentLightMode={lm}
+        onToggleDocumentTheme={onToggleLightMode}
       />
       <div
         ref={editorRef}
