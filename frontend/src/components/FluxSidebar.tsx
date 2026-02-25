@@ -100,13 +100,18 @@ const FluxSidebar = ({ visible, onToggle, onRequestCreateFolder }: FluxSidebarPr
               </button>
 
               {/* Council */}
-              <button
-                onClick={() => { setActiveFolder(null); setActiveView("council"); setFilterPersona(null); }}
-                className={`sidebar-item w-full ${activeView === "council" ? "sidebar-item-active" : ""}`}
-              >
-                <Users size={18} className="shrink-0" />
-                <span className="flex-1 text-left">{t("council.nav")}</span>
-                <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+              <div className={`sidebar-item w-full ${activeView === "council" ? "sidebar-item-active" : ""}`}>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { setActiveFolder(null); setActiveView("council"); setFilterPersona(null); }}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { setActiveFolder(null); setActiveView("council"); setFilterPersona(null); } }}
+                  className="flex items-center gap-2 flex-1 cursor-pointer"
+                >
+                  <Users size={18} className="shrink-0" />
+                  <span className="flex-1 text-left">{t("council.nav")}</span>
+                </div>
+                <div className="flex items-center gap-1">
                   {PERSONAS.map((p) => (
                     <button
                       key={p.key}
@@ -124,7 +129,7 @@ const FluxSidebar = ({ visible, onToggle, onRequestCreateFolder }: FluxSidebarPr
                     />
                   ))}
                 </div>
-              </button>
+              </div>
             </div>
 
             <div className="sidebar-separator" />
