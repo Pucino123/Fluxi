@@ -56,7 +56,8 @@ const SheetsToolbar = ({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5,
+        tolerance: 5,
       },
     })
   );
