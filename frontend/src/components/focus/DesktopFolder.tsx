@@ -2,10 +2,10 @@
  * DesktopFolder Component
  * 
  * DRAG & DROP ARCHITECTURE:
- * - Uses pointer events for dragging (more reliable than HTML5 DnD)
- * - Drop targets detected via position matching
+ * - Uses DesktopDragContext for pointer-based dragging (instant, no lag)
+ * - Registers as a drop target with expanded hitbox
  * - Visual feedback: scale, ring, glow effects on hover
- * - Z-INDEX STRATEGY: Dragging items get z-index 9999 to float above all
+ * - Z-INDEX STRATEGY: Drop targets get z-index 9998 when active
  */
 
 import React, { useRef, useState, useCallback, useEffect, memo, useMemo } from "react";
@@ -14,6 +14,7 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { useFlux, FolderNode } from "@/context/FluxContext";
 import { useFocusStore } from "@/context/FocusContext";
+import { useDesktopDrag } from "@/context/DesktopDragContext";
 import { FOLDER_ICONS } from "@/components/CreateFolderModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
