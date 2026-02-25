@@ -9,6 +9,9 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    watch: {
+      usePolling: false,
+    },
     allowedHosts: true,
   },
   plugins: [react()],
@@ -16,5 +19,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    sourcemap: mode === 'development',
+    minify: mode === 'production',
   },
 }));
