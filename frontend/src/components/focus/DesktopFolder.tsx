@@ -282,27 +282,34 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             ? "0 0 40px rgba(59,130,246,0.5), 0 0 80px rgba(59,130,246,0.2), inset 0 0 30px rgba(59,130,246,0.1)" 
             : (isDraggingLocal ? "0 20px 60px rgba(0,0,0,0.4)" : (folderOpacity <= 0.01 ? "none" : undefined)),
           border: isDropTarget ? "2px solid rgba(59,130,246,0.6)" : (folderOpacity <= 0.01 ? "none" : undefined),
-          opacity: isDraggingLocal ? 0.9 : 1,
+          opacity: isBeingDragged ? 0.4 : (isDraggingLocal ? 0.9 : 1),
           transform: isDraggingLocal ? "rotate(-2deg)" : undefined,
         }}
-        onPointerDown={handlePointerDown}
+        onPointerDown={(e) => {
+          // Use the new context-based drag for primary button
+          if (e.button === 0 && !renaming) {
+            handleContextDragStart(e);
+          }
+          // Also call the legacy handler for position tracking
+          handlePointerDown(e);
+        }}
         onDoubleClick={handleDoubleClick}
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) setSelected(true); }}
         onContextMenu={handleContextMenu}
         onDragOver={(e) => {
-          // Accept drops from documents and folders
+          // Accept drops from documents and folders (legacy HTML5 DnD support)
           if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
             e.preventDefault();
             e.stopPropagation();
             e.dataTransfer.dropEffect = "move";
-            if (!isDropTarget) setIsDropTarget(true);
+            if (!isDropTargetLocal) setIsDropTargetLocal(true);
           }
         }}
         onDragEnter={(e) => {
           if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
             e.preventDefault();
             e.stopPropagation();
-            setIsDropTarget(true);
+            setIsDropTargetLocal(true);
           }
         }}
         onDragLeave={(e) => {
