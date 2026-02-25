@@ -60,6 +60,7 @@ interface ProjectBoardProps {
 
 const ProjectBoard = ({ folderId }: ProjectBoardProps) => {
   const { findFolderNode, createTask, updateTask, removeTask, goals, updateFolder, tasks, getDescendantFolderIds } = useFlux();
+  const { documentThemes, updateDocumentTheme } = useFocusStore();
   const { documents: folderDocs, createDocument, updateDocument, removeDocument } = useDocuments(folderId);
   const [activeDoc, setActiveDoc] = useState<any>(null);
   const [confettiId, setConfettiId] = useState<string | null>(null);
