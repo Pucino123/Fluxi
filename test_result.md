@@ -216,6 +216,9 @@ frontend:
         - working: true
         - agent: "main"
         - comment: "Enhanced drag precision with PointerSensor, DragOverlay, visual drop indicators, and improved collision detection"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ COMPREHENSIVE DRAG & DROP TESTING (Feb 2025): All functionality verified working correctly. Document double-click: Single-click does NOT open documents ✓, double-click opens documents ✓. Toolbar drag & drop: Found 7 grip handles (GripVertical icons), successfully performed drag operations on multiple toolbar segments, visual feedback working. Page stability: Monitored for 30 seconds with no unexpected reloads. Document creation flow works correctly via right-click context menu. All test scenarios PASSED."
 
   - task: "Error Handling & Reload Prevention"
     implemented: true
