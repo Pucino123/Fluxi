@@ -462,7 +462,7 @@ const DraggableWidget = ({
             </div>
           )}
 
-          <div className={`flex-1 ${scrollable ? "overflow-auto council-hidden-scrollbar" : "overflow-hidden"} px-3 ${isFocusMode ? "py-3" : "py-2"} ${widgetMinimalMode || isFocusMode ? "cursor-grab active:cursor-grabbing" : ""}`}
+          <div className={`flex-1 ${scrollable ? "overflow-auto council-hidden-scrollbar" : "overflow-hidden"} px-3 ${isFocusMode ? "py-3" : "py-2"} ${widgetMinimalMode || isFocusMode ? "cursor-grab active:cursor-grabbing" : ""} ${customTextColor ? "[&_*]:!text-inherit" : ""}`}
             onPointerDown={(widgetMinimalMode || isFocusMode) ? onPointerDownDrag : undefined}
             style={{ color: customTextColor || undefined }}
           >
