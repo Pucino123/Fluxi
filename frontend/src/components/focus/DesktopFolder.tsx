@@ -219,20 +219,22 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
           opacity: 1,
-          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.08 : (isDraggingLocal ? 1.05 : 1)),
+          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.12 : (isDraggingLocal ? 1.05 : 1)),
         }}
-        transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { duration: 0.2 }}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl transition-transform ${
-          isDropTarget ? "ring-2 ring-blue-400/60 shadow-[0_0_28px_rgba(59,130,246,0.35)]" : ""
-        } ${isDraggingLocal ? "scale-105 shadow-2xl" : ""}`}
+        transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { duration: 0.15, ease: "easeOut" }}
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl transition-all duration-150 ${
+          isDropTarget 
+            ? "ring-2 ring-primary/70 shadow-[0_0_32px_rgba(59,130,246,0.45)] bg-primary/10" 
+            : ""
+        } ${isDraggingLocal ? "scale-105 shadow-2xl opacity-75" : ""}`}
         style={{
           left: pos.x, top: pos.y, width: 90, minHeight: 90,
           gap: `${labelGap}px`,
-          zIndex: isDragging ? 999 : selected ? 55 : 45,
-          background: "transparent",
+          zIndex: isDropTarget ? 9998 : (isDragging ? 999 : selected ? 55 : 45),
+          background: isDropTarget ? "rgba(59,130,246,0.08)" : "transparent",
           backdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
           WebkitBackdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
-          boxShadow: folderOpacity <= 0.01 ? "none" : undefined,
+          boxShadow: isDropTarget ? "0 0 32px rgba(59,130,246,0.4), inset 0 0 20px rgba(59,130,246,0.1)" : (folderOpacity <= 0.01 ? "none" : undefined),
           border: folderOpacity <= 0.01 ? "none" : undefined,
           opacity: isDraggingLocal ? 0.85 : 1,
         }}
