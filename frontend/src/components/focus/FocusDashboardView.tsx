@@ -76,9 +76,9 @@ const FocusContent = () => {
     const doc = await createDocument(title, type, null);
     if (doc) {
       toast.success(`${type === "text" ? "Document" : "Spreadsheet"} created`);
-      setOpenDesktopDoc(doc);
+      refetchDesktopDocs();
     }
-  }, [user, createDocument]);
+  }, [user, createDocument, refetchDesktopDocs]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     // Only show on canvas background, not on widgets/folders
