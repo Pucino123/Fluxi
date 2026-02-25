@@ -68,6 +68,15 @@ const FocusContent = () => {
   const [dragState, setDragState] = useState<{ id: string; x: number; y: number } | null>(null);
   const dragStateRef = useRef<{ id: string; x: number; y: number } | null>(null);
 
+  // Listen for document-moved events to refetch the desktop documents
+  useEffect(() => {
+    const handleDocumentMoved = () => {
+      refetchDesktopDocs();
+    };
+    window.addEventListener('document-moved', handleDocumentMoved);
+    return () => window.removeEventListener('document-moved', handleDocumentMoved);
+  }, [refetchDesktopDocs]);
+
   const handleCreateDocument = useCallback(async (type: "text" | "spreadsheet") => {
     setShowDocPicker(false);
     setContextMenu(null);
