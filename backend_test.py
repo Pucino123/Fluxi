@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Use the public backend URL from frontend configuration
-BACKEND_URL = "https://fluxi-rebuild.preview.emergentagent.com/api"
+BACKEND_URL = "https://unruffled-moser-3.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):
