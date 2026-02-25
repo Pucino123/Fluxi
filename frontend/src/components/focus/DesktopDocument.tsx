@@ -245,33 +245,26 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
           WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, 
           boxShadow: isDragging ? "0 20px 60px rgba(0,0,0,0.4)" : (docOpacity <= 0.06 ? "none" : undefined),
           border: docOpacity <= 0.06 ? "none" : undefined,
-          opacity: isBeingDragged ? 0.35 : (isDragging ? 0.85 : 1),
-          transform: isDragging ? "scale(1.1) rotate(-2deg)" : undefined,
+          opacity: isBeingDragged ? 0.35 : 1,
+          transform: isBeingDragged ? "scale(0.95)" : undefined,
         }}
         onPointerDown={(e) => {
-          // Use the new context-based drag for primary button
+          /**
+           * GHOST IMAGE SUPPRESSION:
+           * We use pointer events exclusively (not HTML5 drag).
+           * This completely bypasses the browser's native drag system,
+           * so no ghost image is ever created.
+           */
           if (e.button === 0 && !renaming) {
             handleContextDragStart(e);
           }
-          // Also call legacy handler for position tracking
           handlePointerDown(e);
         }}
         onClick={(e) => { e.stopPropagation(); }}
         onDoubleClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
         onContextMenu={handleContextMenu}
-        draggable={!isDragging && !isBeingDragged}
-        onDragStart={(e) => {
-          if (isDragging || isBeingDragged) {
-            e.preventDefault();
-            return;
-          }
-          e.dataTransfer.setData("desktop-doc-id", doc.id);
-          e.dataTransfer.setData("text/plain", doc.title);
-          e.dataTransfer.effectAllowed = "move";
-          createDragImage(e);
-          setIsDragging(true);
-        }}
-        onDragEnd={() => setIsDragging(false)}
+        // DISABLED: Native HTML5 drag - causes ghost image
+        // draggable={false} is implicit when not set
       >
         {docOpacity > 0.06 && (
           <div className="absolute inset-0 rounded-2xl" style={{
