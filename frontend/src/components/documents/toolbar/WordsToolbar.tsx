@@ -46,6 +46,65 @@ const WordsToolbar = ({
   const lm = lightMode;
   const { order, handleReorder } = useToolbarOrder("flux-words-toolbar-order", DEFAULT_ORDER);
   const [activeId, setActiveId] = React.useState<string | null>(null);
+  const [isFloating, setIsFloating] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // Spring physics for smooth dragging
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.8 };
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+
+  // Load saved position
+  useEffect(() => {
+    const savedPos = localStorage.getItem("flux-words-toolbar-pos");
+    const savedFloating = localStorage.getItem("flux-words-toolbar-floating");
+    if (savedPos) {
+      try {
+        const { px, py } = JSON.parse(savedPos);
+        x.set(px);
+        y.set(py);
+      } catch {}
+    }
+    if (savedFloating === "true") {
+      setIsFloating(true);
+    }
+  }, []);
+
+  // Save position on change
+  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const newX = x.get() + info.offset.x;
+    const newY = y.get() + info.offset.y;
+    
+    // Boundary constraints
+    const bounds = {
+      left: -window.innerWidth * 0.3,
+      right: window.innerWidth * 0.3,
+      top: -window.innerHeight * 0.3,
+      bottom: window.innerHeight * 0.5,
+    };
+    
+    const clampedX = Math.max(bounds.left, Math.min(bounds.right, newX));
+    const clampedY = Math.max(bounds.top, Math.min(bounds.bottom, newY));
+    
+    x.set(clampedX);
+    y.set(clampedY);
+    
+    localStorage.setItem("flux-words-toolbar-pos", JSON.stringify({ px: clampedX, py: clampedY }));
+  }, [x, y]);
+
+  const toggleFloating = useCallback(() => {
+    const newFloating = !isFloating;
+    setIsFloating(newFloating);
+    localStorage.setItem("flux-words-toolbar-floating", String(newFloating));
+    if (!newFloating) {
+      x.set(0);
+      y.set(0);
+      localStorage.setItem("flux-words-toolbar-pos", JSON.stringify({ px: 0, py: 0 }));
+    }
+  }, [isFloating, x, y]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
