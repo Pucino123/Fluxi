@@ -30,6 +30,8 @@ interface WordsToolbarProps {
   zoom: number;
   onZoomChange: (z: number) => void;
   lightMode?: boolean;
+  documentLightMode?: boolean;
+  onToggleDocumentTheme?: () => void;
 }
 
 const DEFAULT_ORDER = ["file", "typography", "structure", "insert", "emoji", "ai", "view"];
@@ -38,6 +40,7 @@ const WordsToolbar = ({
   editorRef, onContentChange, exec, renaming, setRenaming, renameValue, setRenameValue,
   commitRename, documentTitle, confirmDelete, setConfirmDelete, onDelete,
   studioMode, onToggleStudio, zoom, onZoomChange, lightMode = false,
+  documentLightMode, onToggleDocumentTheme,
 }: WordsToolbarProps) => {
   const lm = lightMode;
   const { order, handleReorder } = useToolbarOrder("flux-words-toolbar-order", DEFAULT_ORDER);
