@@ -300,13 +300,23 @@ const DraggableWidget = ({
           </div>
 
           {/* Border Width */}
-          <div className="px-4 py-3 flex items-center gap-3">
+          <div className="px-4 py-3 border-b border-border/30 flex items-center gap-3">
             <p className="text-[10px] text-muted-foreground uppercase shrink-0">Border</p>
             <input type="range" min="0" max="4" step="1" value={customBorderWidth}
               onChange={(e) => updateWidgetStyle(id, { borderWidth: parseInt(e.target.value) })}
               onPointerDown={(e) => e.stopPropagation()}
               className="flex-1 h-1 rounded-full appearance-none bg-secondary cursor-pointer accent-primary" />
             <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{customBorderWidth}px</span>
+          </div>
+
+          {/* Border Opacity */}
+          <div className="px-4 py-3 flex items-center gap-3">
+            <p className="text-[10px] text-muted-foreground uppercase shrink-0">B.Opacity</p>
+            <input type="range" min="0" max="1" step="0.05" value={customBorderOpacity}
+              onChange={(e) => updateWidgetStyle(id, { borderOpacity: parseFloat(e.target.value) })}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="flex-1 h-1 rounded-full appearance-none bg-secondary cursor-pointer accent-primary" />
+            <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{Math.round(customBorderOpacity * 100)}%</span>
           </div>
         </div>
       </React.Fragment>,
