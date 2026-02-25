@@ -33,7 +33,7 @@ const ToolbarSegment = ({ children, className = "", visible = true, id, sortable
 };
 
 const SortableSegment = ({ id, children, className = "" }: { id: string; children: React.ReactNode; className?: string }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, over } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, over, setActivatorNodeRef } = useSortable({ id });
 
   const isOver = over?.id === id;
 
@@ -64,12 +64,13 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
       } ${className}`}
     >
       <div
+        ref={setActivatorNodeRef}
         {...attributes}
         {...listeners}
-        className={`flex items-center justify-center w-5 h-full cursor-grab active:cursor-grabbing transition-all duration-150 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/30" : "opacity-30 group-hover/seg:opacity-70 hover:!opacity-100 hover:bg-white/15"}`}
+        className={`flex items-center justify-center w-6 h-full cursor-grab active:cursor-grabbing transition-all duration-150 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/30" : "opacity-40 group-hover/seg:opacity-80 hover:!opacity-100 hover:bg-white/15"}`}
         title="Træk for at flytte"
       >
-        <GripVertical size={12} className="text-foreground/80" />
+        <GripVertical size={14} className="text-foreground/80" />
       </div>
       {children}
     </motion.div>
