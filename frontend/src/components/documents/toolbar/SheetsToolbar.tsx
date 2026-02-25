@@ -51,6 +51,15 @@ const SheetsToolbar = ({
   const lm = lightMode;
   const [fs, setFs] = useState("12");
   const { order, handleReorder } = useToolbarOrder("flux-sheets-toolbar-order", DEFAULT_ORDER);
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const sep = <div className={`w-px h-5 mx-0.5 ${lm ? "bg-gray-200" : "bg-white/[0.1]"}`} />;
   const selectCls = `text-[11px] h-7 px-1.5 rounded-lg border outline-none transition-colors ${
