@@ -71,6 +71,15 @@ interface FocusState {
   desktopDocIconColors: Record<string, string>;
   desktopFolderLabelGaps: Record<string, number>;
   desktopDocLabelGaps: Record<string, number>;
+  // Widget customization
+  widgetStyles: Record<string, {
+    textColor?: string;
+    bgColor?: string;
+    opacity?: number;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+  }>;
 }
 
 const DEFAULT_STATE: FocusState = {
