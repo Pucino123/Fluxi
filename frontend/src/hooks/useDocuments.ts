@@ -105,5 +105,50 @@ export function useDocuments(folderId?: string | null) {
     [user]
   );
 
-  return { documents, loading, createDocument, updateDocument, removeDocument, refetch: fetchDocuments };
+  /** Move document to a folder - optimistic update with rollback on error */
+  const moveDocumentToFolder = useCallback(
+    async (docId: string, targetFolderId: string | null): Promise<boolean> => {
+      if (!user) return false;
+      
+      // Find the document to move
+      const docToMove = documents.find(d => d.id === docId);
+      if (!docToMove) return false;
+      
+      const previousFolderId = docToMove.folder_id;
+      
+      // Optimistic update - immediately remove from current list if moving to different folder
+      setDocuments((prev) => prev.filter((d) => d.id !== docId));
+      
+      try {
+        const { error } = await (supabase as any)
+          .from("documents")
+          .update({ folder_id: targetFolderId })
+          .eq("id", docId)
+          .eq("user_id", user.id);
+        
+        if (error) {
+          // Rollback on error
+          setDocuments((prev) => [docToMove, ...prev]);
+          return false;
+        }
+        
+        return true;
+      } catch {
+        // Rollback on error
+        setDocuments((prev) => [docToMove, ...prev]);
+        return false;
+      }
+    },
+    [user, documents]
+  );
+
+  return { 
+    documents, 
+    loading, 
+    createDocument, 
+    updateDocument, 
+    removeDocument, 
+    moveDocumentToFolder,
+    refetch: fetchDocuments 
+  };
 }
