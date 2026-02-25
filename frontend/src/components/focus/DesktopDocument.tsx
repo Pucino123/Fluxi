@@ -5,6 +5,7 @@ import { FileText, Table, Pencil, Trash2, Copy, Type, Upload, Palette, Search, C
 import { DbDocument } from "@/hooks/useDocuments";
 import { useFocusStore } from "@/context/FocusContext";
 import { useFlux } from "@/context/FluxContext";
+import { useDesktopDrag } from "@/context/DesktopDragContext";
 import { FOLDER_ICONS } from "@/components/CreateFolderModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
