@@ -374,7 +374,7 @@ const DraggableWidget = ({
               }
               return isGlass ? "transparent" : `rgba(255,255,255,${bgAlpha})`;
             })(),
-            borderWidth: widgetMinimalMode ? 0 : (isGlass ? 0 : customBorderWidth),
+            borderWidth: widgetMinimalMode ? 0 : (customBorderWidth !== undefined ? `${customBorderWidth}px` : (isGlass ? 0 : 1)),
             borderStyle: "solid",
             borderColor: widgetMinimalMode ? "transparent" : (customBorderColor || (isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`)),
             borderRadius: `${customBorderRadius}px`,
