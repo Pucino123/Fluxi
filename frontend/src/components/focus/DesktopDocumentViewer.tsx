@@ -5,6 +5,7 @@ import { X, FileText, Table, Sun, Moon, Clock, Keyboard, Maximize2, Minimize2 } 
 import { DbDocument } from "@/hooks/useDocuments";
 import DocumentView from "@/components/documents/DocumentView";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { useFocusStore } from "@/context/FocusContext";
 
 interface Props {
   document: DbDocument;
