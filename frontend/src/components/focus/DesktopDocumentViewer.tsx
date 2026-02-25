@@ -213,7 +213,7 @@ const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: P
               />
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </AnimatePresence>,
     document.body
