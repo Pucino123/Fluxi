@@ -42,6 +42,10 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
   const { setActiveFolder, setActiveView, updateFolder, removeFolder, createFolder, createBlock, moveFolder, getAllFoldersFlat, folderTree } = useFlux();
   const { user } = useAuth();
   const focusStore = useFocusStore();
+  
+  // Drag context for new pointer-based system
+  const { startDrag, registerDropTarget, isDraggedItem, isDropTarget: isDropTargetFromContext } = useDesktopDrag();
+  
   const desktopFolderPositions = focusStore.desktopFolderPositions ?? {};
   const updateDesktopFolderPosition = focusStore.updateDesktopFolderPosition;
   const desktopFolderOpacities = focusStore.desktopFolderOpacities ?? {};
