@@ -162,6 +162,7 @@ const DraggableWidget = ({
   const customBorderColor = widgetStyle.borderColor;
   const customBorderWidth = widgetStyle.borderWidth !== undefined ? widgetStyle.borderWidth : 1;
   const customBorderOpacity = widgetStyle.borderOpacity !== undefined ? widgetStyle.borderOpacity : 1;
+  const customBlur = widgetStyle.blur !== undefined ? widgetStyle.blur : (isGlass ? 16 : 0);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
