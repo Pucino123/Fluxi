@@ -157,8 +157,24 @@ const DraggableWidget = ({
   const showResize = !isFocusMode && !widgetMinimalMode;
   const showCorners = isBuildMode && !widgetMinimalMode;
 
+  // Widget custom styles
+  const customBgColor = widgetStyle.bgColor;
+  const customTextColor = widgetStyle.textColor;
+  const customOpacity = widgetStyle.opacity ?? 1;
+  const customBorderRadius = widgetStyle.borderRadius ?? 16;
+  const customBorderColor = widgetStyle.borderColor;
+  const customBorderWidth = widgetStyle.borderWidth ?? 1;
+
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({ x: e.clientX, y: e.clientY });
+  }, []);
+
   return (
+    <>
     <motion.div
+      data-widget={id}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -173,10 +189,12 @@ const DraggableWidget = ({
         width: pos.w,
         ...(autoHeight ? {} : { height: pos.h }),
         pointerEvents: "none",
+        opacity: customOpacity,
         ...containerStyle,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onContextMenu={handleContextMenu}
     >
       {/* Build mode: pulsing ring */}
       {isBuildMode && (
