@@ -192,7 +192,7 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
         <div
           ref={modalRef}
           className={`relative w-full max-w-4xl max-h-[85vh] flex flex-col backdrop-blur-2xl border rounded-2xl shadow-2xl pointer-events-auto overflow-hidden transition-colors duration-300 ${
-            folderLightMode
+            (openDocument ? documentThemes[openDocument.id] === "light" : folderLightMode)
               ? "bg-white/95 border-gray-200/60 text-gray-900"
               : "bg-card/80 border-border/50"
           }`}
