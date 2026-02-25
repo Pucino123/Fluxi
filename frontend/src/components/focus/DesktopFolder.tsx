@@ -1,3 +1,13 @@
+/**
+ * DesktopFolder Component
+ * 
+ * DRAG & DROP ARCHITECTURE:
+ * - Uses pointer events for dragging (more reliable than HTML5 DnD)
+ * - Drop targets detected via position matching
+ * - Visual feedback: scale, ring, glow effects on hover
+ * - Z-INDEX STRATEGY: Dragging items get z-index 9999 to float above all
+ */
+
 import React, { useRef, useState, useCallback, useEffect, memo, useMemo } from "react";
 import { Folder, FolderOpen, Pencil, Trash2, Copy, FolderInput, CalendarPlus, LayoutDashboard, Share2, FileEdit, Type, Upload, Palette, Search, ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
