@@ -267,8 +267,12 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             toast.success(`Folder moved to ${folder.title}`);
           }
         }}
-        draggable
+        draggable={!isDraggingLocal}
         onDragStart={(e) => {
+          if (isDraggingLocal) {
+            e.preventDefault();
+            return;
+          }
           e.dataTransfer.setData("desktop-folder-id", folder.id);
           e.dataTransfer.effectAllowed = "move";
           onDragStateChange?.({ id: folder.id, x: e.clientX, y: e.clientY });
