@@ -387,7 +387,21 @@ const DraggableWidget = ({
             })(),
             borderWidth: widgetMinimalMode ? 0 : (customBorderWidth !== undefined ? `${customBorderWidth}px` : (isGlass ? 0 : 1)),
             borderStyle: "solid",
-            borderColor: widgetMinimalMode ? "transparent" : (customBorderColor || (isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`)),
+            borderColor: widgetMinimalMode ? "transparent" : (() => {
+              if (customBorderColor) {
+                // Convert HEX to RGBA with border opacity
+                if (customBorderColor.startsWith('#')) {
+                  const hex = customBorderColor.replace('#', '');
+                  const r = parseInt(hex.substring(0, 2), 16);
+                  const g = parseInt(hex.substring(2, 4), 16);
+                  const b = parseInt(hex.substring(4, 6), 16);
+                  return `rgba(${r},${g},${b},${customBorderOpacity})`;
+                }
+                // If it's already rgba/hsl, return as-is (browser handles it)
+                return customBorderColor;
+              }
+              return isGlass ? "transparent" : `rgba(255,255,255,${borderAlpha})`;
+            })(),
             borderRadius: `${customBorderRadius}px`,
             color: customTextColor || undefined,
             pointerEvents: "auto",
