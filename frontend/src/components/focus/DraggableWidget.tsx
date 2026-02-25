@@ -528,7 +528,7 @@ const DraggableWidget = ({
             <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{customBorderWidth}px</span>
           </div>
         </div>
-      </>,
+      </React.Fragment>,
       document.body
     )}
     </>
