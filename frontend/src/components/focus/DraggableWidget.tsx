@@ -173,12 +173,12 @@ const DraggableWidget = ({
 
   return (
     <>
-    <motion.div
-      data-widget={id}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.25 }}
+      <motion.div
+        data-widget={id}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.25 }}
 
       className={`absolute z-50 ${isDragging ? "cursor-grabbing select-none" : ""} ${textClass} ${className} ${
         isBuildMode ? "rounded-2xl" : ""
