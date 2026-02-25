@@ -436,7 +436,8 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
                     removeDocument(id);
                     setOpenDocument(null);
                   }}
-                  lightMode={folderLightMode}
+                  lightMode={documentThemes[openDocument.id] === "light"}
+                  onToggleLightMode={() => updateDocumentTheme(openDocument.id, documentThemes[openDocument.id] === "light" ? "dark" : "light")}
                 />
               </div>
             ) : (
