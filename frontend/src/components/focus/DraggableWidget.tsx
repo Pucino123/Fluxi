@@ -44,9 +44,10 @@ const GRID = 40;
 const DraggableWidget = ({
   id, title, children, defaultPosition, defaultSize, className = "", hideHeader = false, scrollable = false, fontSizeControl, autoHeight = false, onEditAction, containerStyle,
 }: DraggableWidgetProps) => {
-  const { widgetPositions, updateWidgetPosition, toggleWidget, getWidgetOpacity, setWidgetOpacity, widgetMinimalMode, systemMode } = useFocusStore();
+  const { widgetPositions, updateWidgetPosition, toggleWidget, getWidgetOpacity, setWidgetOpacity, widgetMinimalMode, systemMode, widgetStyles, updateWidgetStyle } = useFocusStore();
   const isBuildMode = systemMode === "build";
   const isFocusMode = systemMode === "focus";
+  const widgetStyle = widgetStyles[id] ?? {};
   const defW = defaultSize?.w ?? 380;
   const defH = defaultSize?.h ?? 300;
   const rawPos = widgetPositions[id] || {
