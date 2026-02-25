@@ -33,7 +33,9 @@ const ToolbarSegment = ({ children, className = "", visible = true, id, sortable
 };
 
 const SortableSegment = ({ id, children, className = "" }: { id: string; children: React.ReactNode; className?: string }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, over } = useSortable({ id });
+
+  const isOver = over?.id === id;
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
@@ -54,7 +56,13 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ layout: { type: "spring", stiffness: 500, damping: 35 }, duration: 0.12 }}
-      className={`group/seg flex items-center gap-0.5 px-1.5 py-1 rounded-xl bg-white/[0.08] backdrop-blur-[16px] border border-white/[0.15] shadow-lg transition-all duration-150 ${isDragging ? "shadow-2xl ring-2 ring-primary/60 border-primary/50 bg-white/[0.12]" : ""} ${className}`}
+      className={`group/seg flex items-center gap-0.5 px-1.5 py-1 rounded-xl bg-white/[0.08] backdrop-blur-[16px] border transition-all duration-150 ${
+        isDragging 
+          ? "shadow-2xl ring-2 ring-primary/60 border-primary/50 bg-white/[0.12]" 
+          : isOver 
+            ? "border-primary/40 bg-primary/5" 
+            : "border-white/[0.15] shadow-lg"
+      } ${className}`}
     >
       <div
         {...attributes}
