@@ -303,40 +303,6 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         onContextMenu={handleContextMenu}
         // NOTE: HTML5 drag events removed - using pointer events exclusively
       >
-            await updateFolder(droppedFolderId, { parent_id: folder.id });
-            triggerAbsorb();
-            toast.success(`Folder moved to ${folder.title}`);
-          }
-        }}
-        draggable={!isDraggingLocal}
-        onDragStart={(e) => {
-          if (isDraggingLocal) {
-            e.preventDefault();
-            return;
-          }
-          e.dataTransfer.setData("desktop-folder-id", folder.id);
-          e.dataTransfer.setData("text/plain", folder.title);
-          e.dataTransfer.effectAllowed = "move";
-          
-          // Create custom drag image
-          const dragEl = document.createElement('div');
-          dragEl.className = 'flex flex-col items-center p-3 rounded-2xl bg-card/95 backdrop-blur-xl border border-primary/40 shadow-2xl';
-          dragEl.style.cssText = 'position: fixed; top: -1000px; left: -1000px; z-index: 99999;';
-          dragEl.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="${folder.color || 'hsl(var(--muted-foreground))'}" fill-opacity="0.75" stroke="${folder.color || 'hsl(var(--muted-foreground))'}" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
-            <span style="font-size: 11px; color: white; margin-top: 4px;">${folder.title}</span>
-          `;
-          document.body.appendChild(dragEl);
-          e.dataTransfer.setDragImage(dragEl, 45, 45);
-          requestAnimationFrame(() => setTimeout(() => document.body.removeChild(dragEl), 0));
-          
-          onDragStateChange?.({ id: folder.id, x: e.clientX, y: e.clientY });
-        }}
-        onDragEnd={() => {
-          setIsDropTarget(false);
-          onDragStateChange?.(null);
-        }}
-      >
         {/* Background layer */}
         {folderOpacity > 0.01 ? (
           <div
