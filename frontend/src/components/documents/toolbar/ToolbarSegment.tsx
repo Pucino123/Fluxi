@@ -68,11 +68,12 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
     >
       <div
         className={`flex items-center justify-center w-4 h-6 transition-all duration-150 shrink-0 rounded pointer-events-none ${isDragging ? "opacity-100 bg-primary/30" : "opacity-0 group-hover/seg:opacity-50"}`}
-        title="Drag to reorder"
       >
         <GripVertical size={10} className="text-foreground/80" />
       </div>
-      {children}
+      <div onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} className="flex items-center gap-0.5">
+        {children}
+      </div>
     </motion.div>
   );
 };
