@@ -80,6 +80,8 @@ interface FocusState {
     borderColor?: string;
     borderWidth?: number;
   }>;
+  // Per-document theme
+  documentThemes: Record<string, "light" | "dark">;
 }
 
 const DEFAULT_STATE: FocusState = {
