@@ -208,6 +208,6 @@ test_plan:
 
 agent_communication:
     - agent: "main"
-    - message: "Implemented 5 UX improvements: (1) Fixed sticky note creation from dashboard right-click, (2) Fixed collab popup double X button, (3) Changed media slider cursor to pointer, (4) Added draggable right-click customization popup with drag handle bar, (5) Added customizable label gap setting for folders and documents."
+    - message: "Implemented 6 UX improvements as requested: (1) Widget Customization System - right-click context menu for all widgets with text color, background color, opacity slider, border radius slider, border color, and border width controls. Settings persist via FocusContext. (2) Document Creation - removed auto-open behavior, documents now appear on dashboard only. (3) Drag & Drop for Folders - added draggable attribute and folder-to-folder drop support. (4) Document Drag Improvements - added isDragging state with z-index boost and visual feedback. (5) Toolbar Drag - improved SortableSegment with better visual feedback (semi-transparent, picked up effect, ring highlight). (6) Light/Dark Toggle - now persisted per-document via FocusContext.documentThemes."
     - agent: "testing"
     - message: "BACKEND TESTING COMPLETE: All 3 API endpoints fully tested and working correctly. GET /api/ ✅, POST /api/status ✅, GET /api/status ✅. Data persistence verified with MongoDB. Created comprehensive backend_test.py for future testing. No critical issues found."
