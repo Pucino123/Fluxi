@@ -76,7 +76,12 @@ const DocumentsView = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
                 onClick={() => setSelectedDoc(doc.id)}
-                className="w-full flux-card flex items-center justify-between hover:ring-1 hover:ring-primary/20 transition-all"
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("desktop-doc-id", doc.id);
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                className="w-full flux-card flex items-center justify-between hover:ring-1 hover:ring-primary/20 transition-all cursor-grab active:cursor-grabbing"
               >
                 <div className="flex items-center gap-3">
                   <FileText size={16} className="text-muted-foreground" />
