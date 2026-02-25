@@ -161,6 +161,7 @@ const DraggableWidget = ({
   const customBorderRadius = widgetStyle.borderRadius !== undefined ? widgetStyle.borderRadius : 16;
   const customBorderColor = widgetStyle.borderColor;
   const customBorderWidth = widgetStyle.borderWidth !== undefined ? widgetStyle.borderWidth : 1;
+  const customBorderOpacity = widgetStyle.borderOpacity !== undefined ? widgetStyle.borderOpacity : 1;
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
