@@ -37,11 +37,12 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    transition: transition || "transform 200ms cubic-bezier(0.25, 1, 0.5, 1)",
-    opacity: isDragging ? 0.5 : 1,
-    scale: isDragging ? "1.08" : "1",
+    transition: transition || "transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+    opacity: isDragging ? 0.35 : 1,
+    scale: isDragging ? "1.02" : "1",
     zIndex: isDragging ? 100 : undefined,
     cursor: isDragging ? "grabbing" : undefined,
+    filter: isDragging ? "grayscale(0.6) brightness(0.7)" : undefined,
   };
 
   return (
@@ -52,16 +53,16 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ layout: { type: "spring", stiffness: 400, damping: 30 }, duration: 0.15 }}
-      className={`group/seg flex items-center gap-0.5 px-1.5 py-1 rounded-xl bg-white/[0.08] backdrop-blur-[16px] border border-white/[0.15] shadow-lg transition-all duration-200 ${isDragging ? "shadow-2xl ring-2 ring-primary/50 border-primary/40 bg-white/[0.15]" : ""} ${className}`}
+      transition={{ layout: { type: "spring", stiffness: 500, damping: 35 }, duration: 0.12 }}
+      className={`group/seg flex items-center gap-0.5 px-1.5 py-1 rounded-xl bg-white/[0.08] backdrop-blur-[16px] border border-white/[0.15] shadow-lg transition-all duration-150 ${isDragging ? "shadow-2xl ring-2 ring-primary/60 border-primary/50 bg-white/[0.12]" : ""} ${className}`}
     >
       <div
         {...attributes}
         {...listeners}
-        className={`flex items-center justify-center w-4 h-6 cursor-grab active:cursor-grabbing transition-all duration-200 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/20" : "opacity-0 group-hover/seg:opacity-40 hover:!opacity-80 hover:bg-white/10"}`}
+        className={`flex items-center justify-center w-4 h-6 cursor-grab active:cursor-grabbing transition-all duration-150 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/30" : "opacity-0 group-hover/seg:opacity-50 hover:!opacity-90 hover:bg-white/15"}`}
         title="Drag to reorder"
       >
-        <GripVertical size={10} className="text-foreground/70" />
+        <GripVertical size={10} className="text-foreground/80" />
       </div>
       {children}
     </motion.div>
