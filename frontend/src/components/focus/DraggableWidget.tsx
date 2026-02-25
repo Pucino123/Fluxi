@@ -395,6 +395,143 @@ const DraggableWidget = ({
         </AnimatePresence>
       </div>
     </motion.div>
+
+    {/* Widget Customization Context Menu */}
+    {contextMenu && createPortal(
+      <>
+        <div className="fixed inset-0 z-[9998]" onClick={() => setContextMenu(null)} />
+        <div
+          className="fixed z-[9999] bg-popover/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl overflow-hidden transition-shadow hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+          style={{ left: Math.min(contextMenu.x, window.innerWidth - 320), top: Math.min(contextMenu.y, window.innerHeight - 400), width: 300 }}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          {/* Drag handle bar */}
+          <div
+            className="flex items-center justify-center py-1 cursor-move border-b border-border/20 bg-secondary/30 hover:bg-secondary/50 transition-colors group/drag"
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              const popup = e.currentTarget.parentElement;
+              if (!popup) return;
+              const rect = popup.getBoundingClientRect();
+              const offsetX = e.clientX - rect.left;
+              const offsetY = e.clientY - rect.top;
+              const onMove = (ev: PointerEvent) => {
+                popup.style.left = `${ev.clientX - offsetX}px`;
+                popup.style.top = `${ev.clientY - offsetY}px`;
+              };
+              const onUp = () => {
+                window.removeEventListener("pointermove", onMove);
+                window.removeEventListener("pointerup", onUp);
+              };
+              window.addEventListener("pointermove", onMove);
+              window.addEventListener("pointerup", onUp);
+            }}
+          >
+            <div className="w-8 h-1 rounded-full bg-muted-foreground/30 group-hover/drag:bg-muted-foreground/50 transition-colors" />
+          </div>
+
+          <div className="px-4 py-3 border-b border-border/30">
+            <p className="text-xs font-semibold text-foreground mb-1">{title}</p>
+            <p className="text-[10px] text-muted-foreground">Widget Customization</p>
+          </div>
+
+          {/* Text Color */}
+          <div className="px-4 py-3 border-b border-border/30">
+            <p className="text-[10px] text-muted-foreground uppercase mb-2 flex items-center gap-1"><Type size={10} /> Text Color</p>
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <button onClick={() => updateWidgetStyle(id, { textColor: undefined })}
+                className={`rounded-full border-2 transition-all hover:scale-125 ${!customTextColor ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                style={{ background: "linear-gradient(135deg, #fff 50%, #000 50%)", width: 18, height: 18 }} title="Default" />
+              {WIDGET_COLORS.map((c) => (
+                <button key={c.name} onClick={() => updateWidgetStyle(id, { textColor: c.value })}
+                  className={`rounded-full border-2 transition-all hover:scale-125 ${customTextColor === c.value ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                  style={{ backgroundColor: c.value, width: 18, height: 18 }} title={c.name} />
+              ))}
+              <label className="rounded-full border-2 border-dashed border-muted-foreground/40 cursor-pointer hover:scale-125 transition-all relative overflow-hidden"
+                style={{ width: 18, height: 18 }} title="Custom">
+                <input type="color" value={customTextColor || "#ffffff"}
+                  onChange={(e) => updateWidgetStyle(id, { textColor: e.target.value })}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+              </label>
+            </div>
+          </div>
+
+          {/* Background Color */}
+          <div className="px-4 py-3 border-b border-border/30">
+            <p className="text-[10px] text-muted-foreground uppercase mb-2 flex items-center gap-1"><Palette size={10} /> Background</p>
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <button onClick={() => updateWidgetStyle(id, { bgColor: undefined })}
+                className={`rounded-full border-2 transition-all hover:scale-125 ${!customBgColor ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                style={{ background: "rgba(255,255,255,0.1)", width: 18, height: 18 }} title="Default" />
+              {WIDGET_COLORS.map((c) => (
+                <button key={c.name} onClick={() => updateWidgetStyle(id, { bgColor: c.value })}
+                  className={`rounded-full border-2 transition-all hover:scale-125 ${customBgColor === c.value ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                  style={{ backgroundColor: c.value, width: 18, height: 18 }} title={c.name} />
+              ))}
+              <label className="rounded-full border-2 border-dashed border-muted-foreground/40 cursor-pointer hover:scale-125 transition-all relative overflow-hidden"
+                style={{ width: 18, height: 18 }} title="Custom bg">
+                <input type="color" value={customBgColor || "#16161a"}
+                  onChange={(e) => updateWidgetStyle(id, { bgColor: e.target.value })}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+              </label>
+            </div>
+          </div>
+
+          {/* Opacity */}
+          <div className="px-4 py-3 border-b border-border/30 flex items-center gap-3">
+            <p className="text-[10px] text-muted-foreground uppercase shrink-0">Opacity</p>
+            <input type="range" min="0" max="1" step="0.05" value={customOpacity}
+              onChange={(e) => updateWidgetStyle(id, { opacity: parseFloat(e.target.value) })}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="flex-1 h-1 rounded-full appearance-none bg-secondary cursor-pointer accent-primary" />
+            <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{Math.round(customOpacity * 100)}%</span>
+          </div>
+
+          {/* Border Radius */}
+          <div className="px-4 py-3 border-b border-border/30 flex items-center gap-3">
+            <p className="text-[10px] text-muted-foreground uppercase shrink-0">Radius</p>
+            <input type="range" min="0" max="32" step="1" value={customBorderRadius}
+              onChange={(e) => updateWidgetStyle(id, { borderRadius: parseInt(e.target.value) })}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="flex-1 h-1 rounded-full appearance-none bg-secondary cursor-pointer accent-primary" />
+            <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{customBorderRadius}px</span>
+          </div>
+
+          {/* Border Color */}
+          <div className="px-4 py-3 border-b border-border/30">
+            <p className="text-[10px] text-muted-foreground uppercase mb-2">Border Color</p>
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <button onClick={() => updateWidgetStyle(id, { borderColor: undefined })}
+                className={`rounded-full border-2 transition-all hover:scale-125 ${!customBorderColor ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                style={{ background: "rgba(255,255,255,0.2)", width: 16, height: 16 }} title="Default" />
+              {WIDGET_COLORS.slice(0, 6).map((c) => (
+                <button key={c.name} onClick={() => updateWidgetStyle(id, { borderColor: c.value })}
+                  className={`rounded-full border-2 transition-all hover:scale-125 ${customBorderColor === c.value ? "border-foreground/40 scale-110" : "border-transparent"}`}
+                  style={{ backgroundColor: c.value, width: 16, height: 16 }} title={c.name} />
+              ))}
+              <label className="rounded-full border-2 border-dashed border-muted-foreground/40 cursor-pointer hover:scale-125 transition-all relative overflow-hidden"
+                style={{ width: 16, height: 16 }} title="Custom border">
+                <input type="color" value={customBorderColor || "#ffffff"}
+                  onChange={(e) => updateWidgetStyle(id, { borderColor: e.target.value })}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+              </label>
+            </div>
+          </div>
+
+          {/* Border Width */}
+          <div className="px-4 py-3 flex items-center gap-3">
+            <p className="text-[10px] text-muted-foreground uppercase shrink-0">Border</p>
+            <input type="range" min="0" max="4" step="1" value={customBorderWidth}
+              onChange={(e) => updateWidgetStyle(id, { borderWidth: parseInt(e.target.value) })}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="flex-1 h-1 rounded-full appearance-none bg-secondary cursor-pointer accent-primary" />
+            <span className="text-[10px] text-muted-foreground tabular-nums w-8 text-right">{customBorderWidth}px</span>
+          </div>
+        </div>
+      </>,
+      document.body
+    )}
+    </>
   );
 };
 
