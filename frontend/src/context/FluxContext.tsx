@@ -189,10 +189,13 @@ export function FluxProvider({ children }: { children: ReactNode }) {
   const [activeView, setActiveView] = useState<"stream" | "canvas" | "council" | "focus" | "calendar" | "analytics" | "projects" | "documents" | "settings">("stream");
   const [filterPersona, setFilterPersona] = useState<string | null>(null);
 
+  const loadingRef = useRef(false);
+
   // ── Fetch all data ──
   const refreshAll = useCallback(async () => {
     if (!user) { setLoading(false); return; }
-    if (loading) return; // Prevent concurrent refreshes
+    if (loadingRef.current) return; // Prevent concurrent refreshes
+    loadingRef.current = true;
     setLoading(true);
     try {
       const [fRes, tRes, gRes, wRes, sRes] = await Promise.all([
@@ -211,8 +214,9 @@ export function FluxProvider({ children }: { children: ReactNode }) {
       console.error('Error refreshing data:', error);
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }, [user, loading]);
+  }, [user]);
 
   useEffect(() => { refreshAll(); }, [refreshAll]);
 
