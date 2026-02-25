@@ -208,7 +208,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
   const iconSize = systemMode === "focus" ? 40 : 44;
   const customIcon = folder.icon ? FOLDER_ICONS.find((i) => i.name === folder.icon) : null;
   const IconComp = isDropTarget ? FolderOpen : (customIcon ? customIcon.icon : Folder);
-  const isDragging = dragState?.id === folder.id;
+  const isDragging = dragState?.id === folder.id || isDraggingLocal;
   const iconFill = folder.color || "hsl(var(--muted-foreground))";
 
   return (
@@ -219,12 +219,12 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
           opacity: 1,
-          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.08 : 1),
+          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.08 : (isDraggingLocal ? 1.05 : 1)),
         }}
         transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { duration: 0.2 }}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl ${
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl transition-transform ${
           isDropTarget ? "ring-2 ring-blue-400/60 shadow-[0_0_28px_rgba(59,130,246,0.35)]" : ""
-        }`}
+        } ${isDraggingLocal ? "scale-105 shadow-2xl" : ""}`}
         style={{
           left: pos.x, top: pos.y, width: 90, minHeight: 90,
           gap: `${labelGap}px`,
@@ -234,6 +234,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
           WebkitBackdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
           boxShadow: folderOpacity <= 0.01 ? "none" : undefined,
           border: folderOpacity <= 0.01 ? "none" : undefined,
+          opacity: isDraggingLocal ? 0.85 : 1,
         }}
         onPointerDown={handlePointerDown}
         onDoubleClick={handleDoubleClick}
