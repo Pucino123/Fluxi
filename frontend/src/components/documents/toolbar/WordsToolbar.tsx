@@ -162,7 +162,7 @@ const WordsToolbar = ({
     ),
   };
 
-  const onDragEnd = (event: DragEndEvent) => {
+  const onSegmentDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       handleReorder(active.id as string, over.id as string);
@@ -170,7 +170,7 @@ const WordsToolbar = ({
     setActiveId(null);
   };
 
-  const onDragStart = (event: any) => {
+  const onSegmentDragStart = (event: any) => {
     setActiveId(event.active.id);
   };
 
