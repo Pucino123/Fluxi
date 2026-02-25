@@ -73,8 +73,8 @@ const WordsToolbar = ({
     }
   }, []);
 
-  // Save position on change
-  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  // Save position on change - for floating toolbar
+  const handleToolbarDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const newX = x.get() + info.offset.x;
     const newY = y.get() + info.offset.y;
     
