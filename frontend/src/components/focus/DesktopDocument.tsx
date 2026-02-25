@@ -150,11 +150,18 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
   return (
     <>
       <div
-        className="desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl group"
-        style={{ left: pos.x, top: pos.y, width: 90, minHeight: 90, gap: `${labelGap}px`, zIndex: 45, background: "transparent", backdropFilter: docOpacity <= 0.06 ? "none" : undefined, WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, boxShadow: docOpacity <= 0.06 ? "none" : undefined, border: docOpacity <= 0.06 ? "none" : undefined }}
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl group transition-transform ${isDragging ? "scale-105 shadow-2xl" : ""}`}
+        style={{ left: pos.x, top: pos.y, width: 90, minHeight: 90, gap: `${labelGap}px`, zIndex: isDragging ? 999 : 45, background: "transparent", backdropFilter: docOpacity <= 0.06 ? "none" : undefined, WebkitBackdropFilter: docOpacity <= 0.06 ? "none" : undefined, boxShadow: docOpacity <= 0.06 ? "none" : undefined, border: docOpacity <= 0.06 ? "none" : undefined, opacity: isDragging ? 0.85 : 1 }}
         onPointerDown={handlePointerDown}
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
         onContextMenu={handleContextMenu}
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData("desktop-doc-id", doc.id);
+          e.dataTransfer.effectAllowed = "move";
+          setIsDragging(true);
+        }}
+        onDragEnd={() => setIsDragging(false)}
       >
         {docOpacity > 0.06 && (
           <div className="absolute inset-0 rounded-2xl" style={{
