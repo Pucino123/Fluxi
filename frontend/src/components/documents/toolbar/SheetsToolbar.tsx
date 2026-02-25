@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Bold, Italic, Underline, Strikethrough, AlignLeft, AlignCenter, AlignRight, Palette, PaintBucket, ArrowDownAZ, ArrowUpAZ, Filter, Download } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Bold, Italic, Underline, Strikethrough, AlignLeft, AlignCenter, AlignRight, Palette, PaintBucket, ArrowDownAZ, ArrowUpAZ, Filter, Download, GripVertical, Pin, PinOff } from "lucide-react";
+import { AnimatePresence, motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
 import { DndContext, closestCenter, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useToolbarOrder } from "@/hooks/useToolbarOrder";
