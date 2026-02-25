@@ -11,9 +11,10 @@ interface DocumentViewProps {
   onUpdate: (id: string, updates: Partial<DbDocument>) => void;
   onDelete: (id: string) => void;
   lightMode?: boolean;
+  onToggleLightMode?: () => void;
 }
 
-const DocumentView = ({ document, onBack, onUpdate, onDelete, lightMode = false }: DocumentViewProps) => {
+const DocumentView = ({ document, onBack, onUpdate, onDelete, lightMode = false, onToggleLightMode }: DocumentViewProps) => {
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(document.title);
   const [confirmDelete, setConfirmDelete] = useState(false);
