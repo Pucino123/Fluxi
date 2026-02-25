@@ -114,6 +114,7 @@ const ProjectBoard = ({ folderId }: ProjectBoardProps) => {
   // If viewing a document, show the document editor
   if (activeDoc) {
     const liveDoc = folderDocs.find((d) => d.id === activeDoc.id) || activeDoc;
+    const lightMode = documentThemes[liveDoc.id] === "light";
     return (
       <div className="h-full">
         <DocumentView
@@ -121,6 +122,8 @@ const ProjectBoard = ({ folderId }: ProjectBoardProps) => {
           onBack={() => setActiveDoc(null)}
           onUpdate={updateDocument}
           onDelete={(id) => { removeDocument(id); setActiveDoc(null); }}
+          lightMode={lightMode}
+          onToggleLightMode={() => updateDocumentTheme(liveDoc.id, lightMode ? "dark" : "light")}
         />
       </div>
     );
