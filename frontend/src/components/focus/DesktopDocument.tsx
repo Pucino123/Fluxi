@@ -46,6 +46,11 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
   const { user } = useAuth();
   const store = useFocusStore();
   const { folders, createBlock } = useFlux();
+  
+  // Drag context for new pointer-based system
+  const { startDrag, isDraggedItem } = useDesktopDrag();
+  const isBeingDragged = isDraggedItem(doc.id);
+  
   const pos = store.desktopDocPositions[doc.id] ?? { x: 0, y: 0 };
   const docOpacity = store.desktopDocOpacities[doc.id] ?? 1;
   const titleSize = store.desktopDocTitleSizes[doc.id] ?? 10;
@@ -77,6 +82,17 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
     return FOLDER_ICONS.filter((i) => i.name.toLowerCase().includes(q));
   }, [iconSearch]);
   const displayedIcons = showAllIcons ? filteredIcons : filteredIcons.slice(0, 12);
+
+  // Start drag via new context-based system
+  const handleContextDragStart = useCallback((e: React.PointerEvent) => {
+    if (e.button !== 0 || renaming) return;
+    startDrag({
+      id: doc.id,
+      type: "document",
+      title: doc.title,
+      docType: doc.type,
+    }, e);
+  }, [doc.id, doc.title, doc.type, renaming, startDrag]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     // Only start desktop positioning drag, not HTML5 drag
