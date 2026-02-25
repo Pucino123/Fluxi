@@ -1,8 +1,9 @@
-import React from "react";
-import { AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { AnimatePresence, motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
 import { DndContext, closestCenter, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useToolbarOrder } from "@/hooks/useToolbarOrder";
+import { GripVertical, Pin, PinOff } from "lucide-react";
 import FileMenu from "./FileMenu";
 import TypographyPanel from "./TypographyPanel";
 import StructureTools from "./StructureTools";
