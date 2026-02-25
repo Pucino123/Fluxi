@@ -36,6 +36,8 @@ interface SheetsToolbarProps {
   onExportCsv?: () => void;
   onInsertText?: (text: string) => void;
   lightMode?: boolean;
+  documentLightMode?: boolean;
+  onToggleDocumentTheme?: () => void;
 }
 
 const DEFAULT_ORDER = ["file", "cell-format", "emoji", "data-tools", "view"];
@@ -46,7 +48,7 @@ const SheetsToolbar = ({
   renaming, setRenaming, renameValue, setRenameValue, commitRename,
   documentTitle, confirmDelete, setConfirmDelete, onDelete,
   studioMode, onToggleStudio, onExportCsv, onInsertText,
-  lightMode = false,
+  lightMode = false, documentLightMode, onToggleDocumentTheme,
 }: SheetsToolbarProps) => {
   const lm = lightMode;
   const [fs, setFs] = useState("12");
