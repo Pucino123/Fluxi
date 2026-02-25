@@ -83,11 +83,17 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(folder.title);
   const [justAbsorbed, setJustAbsorbed] = useState(false);
-  const [isDropTarget, setIsDropTarget] = useState(false);
+  const [isDropTargetLocal, setIsDropTargetLocal] = useState(false);
   const dragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
   const didDrag = useRef(false);
   const folderRef = useRef<HTMLDivElement>(null);
+  
+  // Combined drop target state (from both old prop system and new context)
+  const isDropTarget = isDropTargetFromContext(folder.id) || isDropTargetLocal;
+  
+  // Check if this folder is being dragged
+  const isBeingDragged = isDraggedItem(folder.id);
 
   const filteredIcons = useMemo(() => {
     if (!iconSearch.trim()) return FOLDER_ICONS;
@@ -97,12 +103,19 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
 
   const displayedIcons = showAllIcons ? filteredIcons : filteredIcons.slice(0, 12);
 
+  // Register this folder as a drop target
   useEffect(() => {
-    if (!dragState || dragState.id === folder.id) { setIsDropTarget(false); return; }
+    registerDropTarget(folder.id, folderRef.current);
+    return () => registerDropTarget(folder.id, null);
+  }, [folder.id, registerDropTarget]);
+
+  // Legacy dragState prop handling (for backwards compatibility)
+  useEffect(() => {
+    if (!dragState || dragState.id === folder.id) { setIsDropTargetLocal(false); return; }
     const rect = folderRef.current?.getBoundingClientRect();
-    if (!rect) { setIsDropTarget(false); return; }
+    if (!rect) { setIsDropTargetLocal(false); return; }
     const over = dragState.x > rect.left && dragState.x < rect.right && dragState.y > rect.top && dragState.y < rect.bottom;
-    setIsDropTarget(over);
+    setIsDropTargetLocal(over);
   }, [dragState, folder.id]);
 
   const triggerAbsorb = useCallback(() => {
