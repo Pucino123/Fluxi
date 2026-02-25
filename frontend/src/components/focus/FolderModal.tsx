@@ -424,7 +424,7 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
           {/* Content area */}
           <div className="flex-1 overflow-y-auto px-5 pb-5 min-h-0 relative">
             {openDocument ? (
-              <div className="h-full min-h-[400px]">
+              <div className={`h-full min-h-[400px] transition-colors ${documentThemes[openDocument.id] === "light" ? "bg-white" : "bg-background"}`}>
                 <DocumentView
                   document={openDocument}
                   onBack={() => setOpenDocument(null)}
