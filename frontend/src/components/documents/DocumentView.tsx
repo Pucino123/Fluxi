@@ -371,6 +371,8 @@ const SpreadsheetEditor = ({ document: doc, onUpdate, onDelete, renaming, setRen
           }
         }}
         lightMode={lm}
+        documentLightMode={lm}
+        onToggleDocumentTheme={onToggleLightMode}
       />
       <div className={`flex-1 overflow-auto rounded-xl border ${cellBorder} ${studioMode ? (lm ? "bg-white shadow-xl" : "bg-card/80 shadow-xl") : ""}`}>
         <table className="border-collapse text-xs" style={{ tableLayout: "fixed" }}>
