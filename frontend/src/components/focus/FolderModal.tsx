@@ -210,49 +210,55 @@ const FolderModal = ({ folderId, onClose }: FolderModalProps) => {
           }}
         >
           {/* Header */}
-          <div className={`flex items-center gap-3 px-5 pt-5 pb-3 ${folderLightMode ? "bg-white" : "bg-card/60"}`}>
-            {(navStack.length > 1 || openDocument) && !renaming && (
-              <button
-                onClick={() => {
-                  if (openDocument) {
-                    setOpenDocument(null);
-                  } else {
-                    navigateTo(navStack.length - 2);
-                  }
-                }}
-                className={`p-2 rounded-lg transition-colors ${folderLightMode ? "text-gray-500 hover:bg-gray-100 hover:text-gray-800" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}
-              >
-                <ArrowLeft size={16} />
-              </button>
-            )}
-
-            {openDocument ? (
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                {openDocument.type === "text" ? (
-                  <FileText size={18} className="text-blue-400 shrink-0" />
-                ) : (
-                  <Table size={18} className="text-emerald-500 shrink-0" />
-                )}
-                {renamingDoc ? (
-                  <input
-                    value={renameDocValue}
-                    onChange={(e) => setRenameDocValue(e.target.value)}
-                    onBlur={() => commitDocRename()}
-                    onKeyDown={(e) => { if (e.key === "Enter") commitDocRename(); if (e.key === "Escape") setRenamingDoc(false); }}
-                    className={`flex-1 text-lg font-semibold bg-transparent border-b-2 border-primary/40 outline-none ${folderLightMode ? "text-gray-900" : "text-foreground"}`}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className={`text-lg font-semibold truncate cursor-pointer transition-colors ${folderLightMode ? "text-gray-900 hover:text-primary" : "text-foreground hover:text-primary"}`}
-                    onClick={() => { setRenameDocValue(openDocument.title); setRenamingDoc(true); }}
-                    title="Click to rename"
+          {(() => {
+            // When document is open, use document's light mode. Otherwise use folder's light mode.
+            const headerLightMode = openDocument 
+              ? documentThemes[openDocument.id] === "light"
+              : folderLightMode;
+            return (
+              <div className={`flex items-center gap-3 px-5 pt-5 pb-3 ${headerLightMode ? "bg-white" : "bg-card/60"}`}>
+                {(navStack.length > 1 || openDocument) && !renaming && (
+                  <button
+                    onClick={() => {
+                      if (openDocument) {
+                        setOpenDocument(null);
+                      } else {
+                        navigateTo(navStack.length - 2);
+                      }
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${headerLightMode ? "text-gray-500 hover:bg-gray-100 hover:text-gray-800" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"}`}
                   >
-                    {openDocument.title}
-                  </span>
+                    <ArrowLeft size={16} />
+                  </button>
                 )}
-              </div>
-            ) : (
+
+                {openDocument ? (
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {openDocument.type === "text" ? (
+                      <FileText size={18} className="text-blue-400 shrink-0" />
+                    ) : (
+                      <Table size={18} className="text-emerald-500 shrink-0" />
+                    )}
+                    {renamingDoc ? (
+                      <input
+                        value={renameDocValue}
+                        onChange={(e) => setRenameDocValue(e.target.value)}
+                        onBlur={() => commitDocRename()}
+                        onKeyDown={(e) => { if (e.key === "Enter") commitDocRename(); if (e.key === "Escape") setRenamingDoc(false); }}
+                        className={`flex-1 text-lg font-semibold bg-transparent border-b-2 border-primary/40 outline-none ${headerLightMode ? "text-gray-900" : "text-foreground"}`}
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className={`text-lg font-semibold truncate cursor-pointer transition-colors ${headerLightMode ? "text-gray-900 hover:text-primary" : "text-foreground hover:text-primary"}`}
+                        onClick={() => { setRenameDocValue(openDocument.title); setRenamingDoc(true); }}
+                        title="Click to rename"
+                      >
+                        {openDocument.title}
+                      </span>
+                    )}
+                  </div>
+                ) : (
               <>
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
