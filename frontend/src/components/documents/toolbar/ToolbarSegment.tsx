@@ -43,7 +43,6 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
     opacity: isDragging ? 0.35 : 1,
     scale: isDragging ? "1.02" : "1",
     zIndex: isDragging ? 100 : undefined,
-    cursor: isDragging ? "grabbing" : "grab",
     filter: isDragging ? "grayscale(0.6) brightness(0.7)" : undefined,
   };
 
@@ -51,8 +50,6 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
     <motion.div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -67,13 +64,14 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
       } ${className}`}
     >
       <div
-        className={`flex items-center justify-center w-4 h-6 transition-all duration-150 shrink-0 rounded pointer-events-none ${isDragging ? "opacity-100 bg-primary/30" : "opacity-0 group-hover/seg:opacity-50"}`}
+        {...attributes}
+        {...listeners}
+        className={`flex items-center justify-center w-5 h-full cursor-grab active:cursor-grabbing transition-all duration-150 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/30" : "opacity-30 group-hover/seg:opacity-70 hover:!opacity-100 hover:bg-white/15"}`}
+        title="Træk for at flytte"
       >
-        <GripVertical size={10} className="text-foreground/80" />
+        <GripVertical size={12} className="text-foreground/80" />
       </div>
-      <div onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} className="flex items-center gap-0.5">
-        {children}
-      </div>
+      {children}
     </motion.div>
   );
 };
