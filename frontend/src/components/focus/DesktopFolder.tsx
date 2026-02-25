@@ -236,8 +236,19 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
   const iconSize = systemMode === "focus" ? 40 : 44;
   const customIcon = folder.icon ? FOLDER_ICONS.find((i) => i.name === folder.icon) : null;
   const IconComp = isDropTarget ? FolderOpen : (customIcon ? customIcon.icon : Folder);
-  const isDragging = dragState?.id === folder.id || isDraggingLocal;
+  const isDragging = isBeingDragged || dragState?.id === folder.id || isDraggingLocal;
   const iconFill = folder.color || "hsl(var(--muted-foreground))";
+
+  // Handler to start dragging via the new context
+  const handleContextDragStart = useCallback((e: React.PointerEvent) => {
+    if (e.button !== 0) return; // Only left click
+    startDrag({
+      id: folder.id,
+      type: "folder",
+      title: folder.title,
+      color: folder.color,
+    }, e);
+  }, [folder.id, folder.title, folder.color, startDrag]);
 
   return (
     <>
@@ -247,11 +258,11 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         data-drop-target={folder.id}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
-          opacity: 1,
+          opacity: isBeingDragged ? 0.4 : 1, // Dim the original when being dragged
           scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.15 : (isDraggingLocal ? 1.08 : 1)),
         }}
         transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { type: "spring", stiffness: 400, damping: 25 }}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl transition-shadow duration-150 ${
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl transition-shadow duration-100 ${
           isDropTarget 
             ? "ring-2 ring-primary shadow-[0_0_40px_rgba(59,130,246,0.5)]" 
             : ""
@@ -262,8 +273,8 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
           width: 90, 
           minHeight: 90,
           gap: `${labelGap}px`,
-          // Z-INDEX STRATEGY: Dragging items float above everything
-          zIndex: isDraggingLocal ? 9999 : (isDropTarget ? 9998 : (selected ? 55 : 45)),
+          // Z-INDEX STRATEGY: Drop targets float high, dragged items handled by overlay
+          zIndex: isDropTarget ? 9998 : (isDraggingLocal ? 9999 : (selected ? 55 : 45)),
           background: isDropTarget ? "rgba(59,130,246,0.12)" : "transparent",
           backdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
           WebkitBackdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
