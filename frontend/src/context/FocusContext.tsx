@@ -79,6 +79,7 @@ interface FocusState {
     borderRadius?: number;
     borderColor?: string;
     borderWidth?: number;
+    borderOpacity?: number;
   }>;
   // Per-document theme
   documentThemes: Record<string, "light" | "dark">;
