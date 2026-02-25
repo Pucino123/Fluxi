@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FocusProvider, useFocusStore } from "@/context/FocusContext";
 import { useFlux } from "@/context/FluxContext";
+import { DesktopDragProvider } from "@/context/DesktopDragContext";
 import { suggestIcon } from "@/components/CreateFolderModal";
 import { useDocuments } from "@/hooks/useDocuments";
 import { useAuth } from "@/hooks/useAuth";
