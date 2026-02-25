@@ -48,10 +48,13 @@ const ShortcutsPanel = ({ lightMode }: { lightMode: boolean }) => {
 };
 
 const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: Props) => {
-  const [lightMode, setLightMode] = useState(false);
+  const { documentThemes, updateDocumentTheme } = useFocusStore();
   const [expanded, setExpanded] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date>(new Date());
+
+  const lightMode = documentThemes[doc.id] === "light";
+  const setLightMode = (v: boolean) => updateDocumentTheme(doc.id, v ? "light" : "dark");
 
   const wrappedOnUpdate = (id: string, updates: Partial<DbDocument>) => {
     onUpdate(id, updates);
