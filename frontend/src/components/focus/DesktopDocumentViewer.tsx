@@ -200,8 +200,8 @@ const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: P
             )}
           </AnimatePresence>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-5 min-h-0">
-            <div className="h-full min-h-[400px]">
+          <div className={`flex-1 overflow-y-auto px-5 pb-5 min-h-0 ${lightMode ? "bg-white" : ""}`}>
+            <div className={`h-full min-h-[400px] ${lightMode ? "bg-white" : ""}`}>
               <DocumentView
                 document={doc}
                 onBack={onClose}
