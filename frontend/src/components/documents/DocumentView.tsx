@@ -29,6 +29,7 @@ const DocumentView = ({ document, onBack, onUpdate, onDelete, lightMode = false,
   if (document.type === "spreadsheet") {
     return (
       <SpreadsheetEditor
+        key={`${document.id}-${lightMode ? 'light' : 'dark'}`}
         document={document} onUpdate={onUpdate} onDelete={onDelete}
         renaming={renaming} setRenaming={setRenaming} renameValue={renameValue} setRenameValue={setRenameValue}
         commitRename={commitRename} confirmDelete={confirmDelete} setConfirmDelete={setConfirmDelete} lightMode={lightMode}
@@ -39,6 +40,7 @@ const DocumentView = ({ document, onBack, onUpdate, onDelete, lightMode = false,
 
   return (
     <TextEditor
+      key={`${document.id}-${lightMode ? 'light' : 'dark'}`}
       document={document} onUpdate={onUpdate} onDelete={onDelete}
       renaming={renaming} setRenaming={setRenaming} renameValue={renameValue} setRenameValue={setRenameValue}
       commitRename={commitRename} confirmDelete={confirmDelete} setConfirmDelete={setConfirmDelete} lightMode={lightMode}
