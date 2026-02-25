@@ -155,13 +155,6 @@ const DesktopDocument = ({ doc, onOpen, onDelete, onDuplicate, onRefetch }: Desk
         onPointerDown={handlePointerDown}
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) onOpen(doc); }}
         onContextMenu={handleContextMenu}
-        draggable
-        onDragStart={(e) => {
-          e.dataTransfer.setData("desktop-doc-id", doc.id);
-          e.dataTransfer.effectAllowed = "move";
-          setIsDragging(true);
-        }}
-        onDragEnd={() => setIsDragging(false)}
       >
         {docOpacity > 0.06 && (
           <div className="absolute inset-0 rounded-2xl" style={{
