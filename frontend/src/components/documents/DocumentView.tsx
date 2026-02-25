@@ -60,10 +60,11 @@ interface EditorProps {
   confirmDelete: boolean;
   setConfirmDelete: (v: boolean) => void;
   lightMode?: boolean;
+  onToggleLightMode?: () => void;
 }
 
 /* ─── Text Editor ─── */
-const TextEditor = ({ document: doc, onUpdate, onDelete, renaming, setRenaming, renameValue, setRenameValue, commitRename, confirmDelete, setConfirmDelete, lightMode = false }: EditorProps) => {
+const TextEditor = ({ document: doc, onUpdate, onDelete, renaming, setRenaming, renameValue, setRenameValue, commitRename, confirmDelete, setConfirmDelete, lightMode = false, onToggleLightMode }: EditorProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
   const [studioMode, setStudioMode] = useState(false);
