@@ -133,6 +133,11 @@ const SheetsToolbar = ({
     if (over && active.id !== over.id) {
       handleReorder(active.id as string, over.id as string);
     }
+    setActiveId(null);
+  };
+
+  const onDragStart = (event: any) => {
+    setActiveId(event.active.id);
   };
 
   return (
@@ -141,12 +146,19 @@ const SheetsToolbar = ({
         ? "fixed top-4 left-1/2 -translate-x-1/2 z-[200] rounded-2xl bg-popover/95 backdrop-blur-xl border-border/30 shadow-2xl max-w-[95vw]"
         : lm ? "border-gray-200 bg-transparent" : "border-white/[0.08] bg-transparent"
     }`}>
-      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <SortableContext items={order} strategy={horizontalListSortingStrategy}>
           <AnimatePresence mode="sync">
             {order.map(id => segmentMap[id])}
           </AnimatePresence>
         </SortableContext>
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <div className="opacity-90 scale-105 cursor-grabbing">
+              {segmentMap[activeId]}
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
     </div>
   );
