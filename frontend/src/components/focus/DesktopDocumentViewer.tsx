@@ -89,8 +89,8 @@ const DesktopDocumentViewer = ({ document: doc, onClose, onUpdate, onDelete }: P
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         onClick={onClose}
       >
-        {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
+        {/* Backdrop - pointer-events-none so it doesn't block clicks to modal */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-md pointer-events-none" />
         
         {/* Modal */}
         <motion.div
