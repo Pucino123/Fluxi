@@ -243,25 +243,53 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
         onDragOver={(e) => {
           if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
             e.preventDefault();
+            e.stopPropagation();
             e.dataTransfer.dropEffect = "move";
+            if (!isDropTarget) setIsDropTarget(true);
+          }
+        }}
+        onDragEnter={(e) => {
+          if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
+            e.preventDefault();
+            e.stopPropagation();
             setIsDropTarget(true);
           }
         }}
-        onDragLeave={() => setIsDropTarget(false)}
+        onDragLeave={(e) => {
+          // Only set false if we're actually leaving the folder (not entering a child)
+          const rect = folderRef.current?.getBoundingClientRect();
+          if (rect) {
+            const { clientX, clientY } = e;
+            if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+              setIsDropTarget(false);
+            }
+          }
+        }}
         onDrop={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDropTarget(false);
+          
           const docId = e.dataTransfer.getData("desktop-doc-id");
           const folderId = e.dataTransfer.getData("desktop-folder-id");
+          
           if (docId) {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsDropTarget(false);
-            await (supabase as any).from("documents").update({ folder_id: folder.id }).eq("id", docId);
-            triggerAbsorb();
-            toast.success(`Moved to ${folder.title}`);
+            // Move document into this folder
+            const { error } = await (supabase as any)
+              .from("documents")
+              .update({ folder_id: folder.id })
+              .eq("id", docId);
+            
+            if (!error) {
+              triggerAbsorb();
+              toast.success(`Moved to ${folder.title}`);
+              // Dispatch custom event to notify parent to refetch
+              window.dispatchEvent(new CustomEvent('document-moved', { detail: { docId, folderId: folder.id } }));
+            } else {
+              toast.error("Failed to move document");
+            }
           } else if (folderId && folderId !== folder.id) {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsDropTarget(false);
+            // Move folder into this folder
             await updateFolder(folderId, { parent_id: folder.id });
             triggerAbsorb();
             toast.success(`Folder moved to ${folder.title}`);
