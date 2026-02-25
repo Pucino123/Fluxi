@@ -1,8 +1,20 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
-import { X, GripHorizontal, Minus, Plus, Settings2 } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, GripHorizontal, Minus, Plus, Settings2, Type, Palette } from "lucide-react";
 import { useFocusStore } from "@/context/FocusContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Slider } from "@/components/ui/slider";
+
+const WIDGET_COLORS = [
+  { name: "White", value: "#ffffff" },
+  { name: "Black", value: "#000000" },
+  { name: "Blue", value: "hsl(217 91% 60%)" },
+  { name: "Violet", value: "hsl(var(--aurora-violet))" },
+  { name: "Pink", value: "hsl(var(--aurora-pink))" },
+  { name: "Green", value: "hsl(150 60% 45%)" },
+  { name: "Orange", value: "hsl(30 90% 55%)" },
+  { name: "Red", value: "hsl(0 72% 55%)" },
+];
 
 interface FontSizeControl {
   value: number;
