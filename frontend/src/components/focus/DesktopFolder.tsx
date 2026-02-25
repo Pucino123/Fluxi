@@ -226,33 +226,42 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
       <motion.div
         ref={folderRef}
         data-folder-id={folder.id}
+        data-drop-target={folder.id}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
           opacity: 1,
-          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.12 : (isDraggingLocal ? 1.05 : 1)),
+          scale: justAbsorbed ? [1, 1.15, 0.92, 1.05, 1] : (isDropTarget ? 1.15 : (isDraggingLocal ? 1.08 : 1)),
         }}
-        transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { duration: 0.15, ease: "easeOut" }}
-        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 cursor-pointer select-none rounded-2xl transition-all duration-150 ${
+        transition={justAbsorbed ? { duration: 0.4, ease: "easeOut" } : { type: "spring", stiffness: 400, damping: 25 }}
+        className={`desktop-folder absolute flex flex-col items-center justify-center p-2 pb-1 select-none rounded-2xl transition-shadow duration-150 ${
           isDropTarget 
-            ? "ring-2 ring-primary/70 shadow-[0_0_32px_rgba(59,130,246,0.45)] bg-primary/10" 
+            ? "ring-2 ring-primary shadow-[0_0_40px_rgba(59,130,246,0.5)]" 
             : ""
-        } ${isDraggingLocal ? "scale-105 shadow-2xl opacity-75" : ""}`}
+        } ${isDraggingLocal ? "cursor-grabbing" : "cursor-grab"}`}
         style={{
-          left: pos.x, top: pos.y, width: 90, minHeight: 90,
+          left: pos.x, 
+          top: pos.y, 
+          width: 90, 
+          minHeight: 90,
           gap: `${labelGap}px`,
-          zIndex: isDropTarget ? 9998 : (isDragging ? 999 : selected ? 55 : 45),
-          background: isDropTarget ? "rgba(59,130,246,0.08)" : "transparent",
+          // Z-INDEX STRATEGY: Dragging items float above everything
+          zIndex: isDraggingLocal ? 9999 : (isDropTarget ? 9998 : (selected ? 55 : 45)),
+          background: isDropTarget ? "rgba(59,130,246,0.12)" : "transparent",
           backdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
           WebkitBackdropFilter: folderOpacity <= 0.01 ? "none" : undefined,
-          boxShadow: isDropTarget ? "0 0 32px rgba(59,130,246,0.4), inset 0 0 20px rgba(59,130,246,0.1)" : (folderOpacity <= 0.01 ? "none" : undefined),
-          border: folderOpacity <= 0.01 ? "none" : undefined,
-          opacity: isDraggingLocal ? 0.85 : 1,
+          boxShadow: isDropTarget 
+            ? "0 0 40px rgba(59,130,246,0.5), 0 0 80px rgba(59,130,246,0.2), inset 0 0 30px rgba(59,130,246,0.1)" 
+            : (isDraggingLocal ? "0 20px 60px rgba(0,0,0,0.4)" : (folderOpacity <= 0.01 ? "none" : undefined)),
+          border: isDropTarget ? "2px solid rgba(59,130,246,0.6)" : (folderOpacity <= 0.01 ? "none" : undefined),
+          opacity: isDraggingLocal ? 0.9 : 1,
+          transform: isDraggingLocal ? "rotate(-2deg)" : undefined,
         }}
         onPointerDown={handlePointerDown}
         onDoubleClick={handleDoubleClick}
         onClick={(e) => { e.stopPropagation(); if (!didDrag.current) setSelected(true); }}
         onContextMenu={handleContextMenu}
         onDragOver={(e) => {
+          // Accept drops from documents and folders
           if (e.dataTransfer.types.includes("desktop-doc-id") || e.dataTransfer.types.includes("desktop-folder-id")) {
             e.preventDefault();
             e.stopPropagation();
@@ -268,11 +277,13 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
           }
         }}
         onDragLeave={(e) => {
-          // Only set false if we're actually leaving the folder (not entering a child)
+          // Check if we're truly leaving (not entering a child element)
           const rect = folderRef.current?.getBoundingClientRect();
           if (rect) {
             const { clientX, clientY } = e;
-            if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+            const padding = 5;
+            if (clientX < rect.left - padding || clientX > rect.right + padding || 
+                clientY < rect.top - padding || clientY > rect.bottom + padding) {
               setIsDropTarget(false);
             }
           }
@@ -283,7 +294,7 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
           setIsDropTarget(false);
           
           const docId = e.dataTransfer.getData("desktop-doc-id");
-          const folderId = e.dataTransfer.getData("desktop-folder-id");
+          const droppedFolderId = e.dataTransfer.getData("desktop-folder-id");
           
           if (docId) {
             // Move document into this folder
@@ -295,14 +306,13 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             if (!error) {
               triggerAbsorb();
               toast.success(`Moved to ${folder.title}`);
-              // Dispatch custom event to notify parent to refetch
               window.dispatchEvent(new CustomEvent('document-moved', { detail: { docId, folderId: folder.id } }));
             } else {
               toast.error("Failed to move document");
             }
-          } else if (folderId && folderId !== folder.id) {
-            // Move folder into this folder
-            await updateFolder(folderId, { parent_id: folder.id });
+          } else if (droppedFolderId && droppedFolderId !== folder.id) {
+            // Move folder into this folder (nesting)
+            await updateFolder(droppedFolderId, { parent_id: folder.id });
             triggerAbsorb();
             toast.success(`Folder moved to ${folder.title}`);
           }
@@ -314,10 +324,27 @@ const DesktopFolder = ({ folder, onOpenModal, dragState, onDragStateChange }: De
             return;
           }
           e.dataTransfer.setData("desktop-folder-id", folder.id);
+          e.dataTransfer.setData("text/plain", folder.title);
           e.dataTransfer.effectAllowed = "move";
+          
+          // Create custom drag image
+          const dragEl = document.createElement('div');
+          dragEl.className = 'flex flex-col items-center p-3 rounded-2xl bg-card/95 backdrop-blur-xl border border-primary/40 shadow-2xl';
+          dragEl.style.cssText = 'position: fixed; top: -1000px; left: -1000px; z-index: 99999;';
+          dragEl.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="${folder.color || 'hsl(var(--muted-foreground))'}" fill-opacity="0.75" stroke="${folder.color || 'hsl(var(--muted-foreground))'}" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+            <span style="font-size: 11px; color: white; margin-top: 4px;">${folder.title}</span>
+          `;
+          document.body.appendChild(dragEl);
+          e.dataTransfer.setDragImage(dragEl, 45, 45);
+          requestAnimationFrame(() => setTimeout(() => document.body.removeChild(dragEl), 0));
+          
           onDragStateChange?.({ id: folder.id, x: e.clientX, y: e.clientY });
         }}
-        onDragEnd={() => onDragStateChange?.(null)}
+        onDragEnd={() => {
+          setIsDropTarget(false);
+          onDragStateChange?.(null);
+        }}
       >
         {/* Background layer */}
         {folderOpacity > 0.01 ? (
