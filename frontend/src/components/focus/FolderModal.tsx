@@ -7,6 +7,7 @@ import {
   Sparkles, Sun, Moon,
 } from "lucide-react";
 import { useFlux, FolderNode } from "@/context/FluxContext";
+import { useFocusStore } from "@/context/FocusContext";
 import { useDocuments, DbDocument } from "@/hooks/useDocuments";
 import { FOLDER_ICONS } from "@/components/CreateFolderModal";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
