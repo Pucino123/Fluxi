@@ -124,6 +124,7 @@ const DEFAULT_STATE: FocusState = {
   desktopDocIconColors: {},
   desktopFolderLabelGaps: {},
   desktopDocLabelGaps: {},
+  widgetStyles: {},
 };
 
 const STORAGE_KEY = "flux-focus-prefs";
