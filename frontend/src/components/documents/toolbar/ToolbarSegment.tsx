@@ -43,7 +43,7 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
     opacity: isDragging ? 0.35 : 1,
     scale: isDragging ? "1.02" : "1",
     zIndex: isDragging ? 100 : undefined,
-    cursor: isDragging ? "grabbing" : undefined,
+    cursor: isDragging ? "grabbing" : "grab",
     filter: isDragging ? "grayscale(0.6) brightness(0.7)" : undefined,
   };
 
@@ -51,6 +51,8 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
     <motion.div
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...listeners}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -65,9 +67,7 @@ const SortableSegment = ({ id, children, className = "" }: { id: string; childre
       } ${className}`}
     >
       <div
-        {...attributes}
-        {...listeners}
-        className={`flex items-center justify-center w-4 h-6 cursor-grab active:cursor-grabbing transition-all duration-150 shrink-0 rounded ${isDragging ? "opacity-100 bg-primary/30" : "opacity-0 group-hover/seg:opacity-50 hover:!opacity-90 hover:bg-white/15"}`}
+        className={`flex items-center justify-center w-4 h-6 transition-all duration-150 shrink-0 rounded pointer-events-none ${isDragging ? "opacity-100 bg-primary/30" : "opacity-0 group-hover/seg:opacity-50"}`}
         title="Drag to reorder"
       >
         <GripVertical size={10} className="text-foreground/80" />
