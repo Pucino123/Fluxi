@@ -386,6 +386,15 @@ export function FocusProvider({ children }: { children: ReactNode }) {
     desktopDocLabelGaps: state.desktopDocLabelGaps ?? {},
     updateDesktopDocLabelGap: (docId, gap) =>
       setState((prev) => ({ ...prev, desktopDocLabelGaps: { ...(prev.desktopDocLabelGaps ?? {}), [docId]: gap } })),
+    widgetStyles: state.widgetStyles ?? {},
+    updateWidgetStyle: (widgetId, style) =>
+      setState((prev) => ({
+        ...prev,
+        widgetStyles: {
+          ...(prev.widgetStyles ?? {}),
+          [widgetId]: { ...(prev.widgetStyles?.[widgetId] ?? {}), ...style },
+        },
+      })),
     resetDashboard: () => setState({
       ...DEFAULT_STATE,
       currentBackground: state.currentBackground,
